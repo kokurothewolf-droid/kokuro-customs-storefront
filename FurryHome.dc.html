@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Furry Home</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+<link rel="stylesheet" href="./theme/furry.css">
+</head>
+<body data-theme="furry">
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fh{background:var(--k-bg);color:var(--k-ink);font-family:var(--k-font-body);overflow:hidden}
+.fh *{box-sizing:border-box}
+.fh-hero{position:relative;min-height:640px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;max-width:var(--k-max);margin:0 auto;padding:72px var(--k-gutter) 56px}
+.fh-moon{position:absolute;right:6%;top:6%;width:min(460px,46vw);opacity:.95;pointer-events:none}
+.fh-kanji{position:absolute;right:var(--k-gutter);top:40px;writing-mode:vertical-rl;font-family:var(--k-font-jp);font-weight:700;font-size:44px;letter-spacing:.2em;color:var(--k-ink);opacity:.85}
+.fh-copy{position:relative;z-index:2}
+.fh-eyebrow{margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--k-accent-text)}
+.fh-title{margin:0;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:clamp(64px,9vw,132px);line-height:.88;letter-spacing:.015em;text-transform:uppercase;outline:none}
+.fh-title b{display:block;font-weight:400;color:var(--k-accent)}
+.fh-under{display:block;width:min(340px,70%);margin-top:10px}
+.fh-sub{margin:22px 0 28px;font-family:var(--k-font-display);font-size:clamp(22px,2.4vw,32px);letter-spacing:.14em;text-transform:uppercase;color:var(--k-ink-soft)}
+.fh-art{position:relative;z-index:1}
+.fh-art img{display:block;width:100%;height:auto}
+.fh-art .fh-art-m{display:none}
+.fh-note{margin:10px 0 0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--k-muted)}
+.fh-species{background:var(--k-cream);color:var(--k-on-cream);padding:64px var(--k-gutter)}
+.fh-wrap{max-width:var(--k-max);margin:0 auto}
+.fh-h2{margin:0 0 6px;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:clamp(36px,4.6vw,60px);letter-spacing:.03em;text-transform:uppercase;text-align:center}
+.fh-h2 span{color:var(--k-accent-on-light)}
+.fh-lede{margin:0 auto 32px;max-width:520px;text-align:center;font-size:13px;line-height:1.6;color:#4a4545}
+.fh-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:0;padding:0;list-style:none}
+.fh-tile{position:relative;background:#0B0B0B;color:var(--k-ink);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+.fh-tile img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.fh-tile div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 16px 18px}
+.fh-tile h3{margin:0;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:30px;letter-spacing:.04em;text-transform:uppercase}
+.fh-soon{padding:4px 8px;border:1px solid var(--k-line-strong);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--k-ink-dim)}
+.fh-band{position:relative;background:var(--k-surface-2);border-top:1px solid var(--k-line);border-bottom:1px solid var(--k-line);padding:56px var(--k-gutter)}
+.fh-band .fh-wrap{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.fh-band h2{margin:0;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:clamp(34px,4.4vw,58px);line-height:.95;letter-spacing:.03em;text-transform:uppercase}
+.fh-band h2 span{color:var(--k-accent)}
+.fh-human{display:inline-flex;margin:0 var(--k-gutter) 0 auto}
+.fh-foot{display:flex;justify-content:center;padding:20px var(--k-gutter) 40px}
+.fh button:focus-visible,.fh a:focus-visible{outline:3px solid var(--k-accent-text);outline-offset:3px}
+@media (max-width:900px){
+.fh-hero{grid-template-columns:1fr;padding:48px 20px 28px;min-height:0}
+.fh-art .fh-art-d{display:none}.fh-art .fh-art-m{display:block}
+.fh-moon{right:-14%;top:2%;width:72vw;opacity:.7}
+.fh-kanji{font-size:30px;right:16px;top:20px}
+.fh-tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fh-species,.fh-band{padding-left:20px;padding-right:20px}
+}
+@media (max-width:420px){.fh-tile h3{font-size:24px}.fh-soon{display:none}}
+</style>
+</helmet>
+<main class="fh" id="furry-home">
+<section class="fh-hero" aria-labelledby="fh-title">
+<img class="fh-moon" src="./assets/aacc3226063c625e486876e728aae78c.svg" alt="" data-k-parallax="0.08">
+<span class="fh-kanji" aria-hidden="true">黒狼</span>
+<div class="fh-copy">
+<p class="fh-eyebrow" data-k-reveal="fade">Furry Mode</p>
+<h1 class="fh-title" id="fh-title" tabindex="-1"><span data-k-reveal="line">Welcome to</span><b data-k-reveal="line" data-k-delay="0.1">the pack.</b></h1>
+<img class="fh-under" src="./assets/39036aeda9ca1e8d283ced1e7a500f44.svg" alt="" data-k-reveal="draw" data-k-delay="0.3">
+<p class="fh-sub" data-k-reveal="rise" data-k-delay="0.25">You found your people.</p>
+<button class="k-btn" onClick="{{ onShop }}" data-k-magnetic="0.2" data-k-reveal="pop" data-k-delay="0.35"><span>Shop the Den</span></button>
+</div>
+<div class="fh-art" data-k-reveal="slash" data-k-delay="0.1">
+<img class="fh-art-d" src="./assets/a5bed737efdf6970068bdbaf0c60acdb.webp" alt="Illustrated wolf and fox characters in Kokuro gear (concept art)">
+<img class="fh-art-m" src="./assets/d92792c23ffe1a08b08cc884f955ca32.webp" alt="Illustrated wolf and fox characters in Kokuro gear (concept art)">
+</div>
+</section>
+<section class="fh-species" aria-labelledby="fh-species-h">
+<div class="fh-wrap">
+<h2 class="fh-h2" id="fh-species-h" data-k-reveal="rise">Find your <span>species</span></h2>
+<p class="fh-lede" data-k-reveal="fade">Concept art only. Species collections open when species-tagged products exist.</p>
+<ul class="fh-tiles">
+<sc-for list="{{ species }}" as="s" hint-placeholder-count="4">
+<li class="fh-tile" data-k-reveal="rise"><img src="{{ s.img }}" alt=""><div><h3>{{ s.name }}</h3><span class="fh-soon">Coming soon</span></div></li>
+</sc-for>
+</ul>
+</div>
+</section>
+<section class="fh-band" aria-label="Custom prints">
+<div class="fh-wrap">
+<h2 data-k-reveal="rise">Custom art. <span>Your character.</span> Your gear.</h2>
+<button class="k-btn" onClick="{{ onCustom }}"><span>Start a custom print</span></button>
+</div>
+</section>
+<div class="fh-foot">
+<button class="k-btn k-btn--ghost k-btn--sm" onClick="{{ onHuman }}"><span>Human Mode</span></button>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onShop":{"editor":null},"onCustom":{"editor":null},"onHuman":{"editor":null},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const noop = () => {};
+    return {
+      onShop: this.props.onShop || noop,
+      onCustom: this.props.onCustom || noop,
+      onHuman: this.props.onHuman || noop,
+      species: [
+        { name: 'Wolves', img: './assets/eb78363b6a33c6cb068911298b76e350.webp' },
+        { name: 'Foxes', img: './assets/30586d652d1bdb73463589f917d891a4.webp' },
+        { name: 'Dragons', img: './assets/0e26ad956f7a46da38c34af0ff4f3253.webp' },
+        { name: 'Felines', img: './assets/73b395a17f54ead1e152face2267fb7e.webp' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

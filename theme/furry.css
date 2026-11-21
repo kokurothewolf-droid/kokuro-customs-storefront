@@ -1,0 +1,21 @@
+/* ==========================================================================
+   KOKURO FURRY THEME: token overrides only.
+   Applied when the Main root has data-theme="furry". Same crimson and ivory,
+   warmer plum-tinged blacks (from the Furry kit tokens). Components are shared
+   with Human Mode; nothing here duplicates a layout.
+   ========================================================================== */
+[data-theme="furry"] {
+  --k-bg: #0E0C0D;
+  --k-surface: #191719;
+  --k-surface-2: #131112;
+  --k-line: #3A2D30;
+  --k-line-strong: #5A4145;
+  --k-muted: #B8ADB0;
+  --k-ink-dim: #CFC4C6;
+
+  /* Slightly springier motion than Human Mode */
+  --k-m-dur: 0.8;
+  --k-m-stagger: 0.06;
+  --k-m-rise: 34;
+  --k-m-ease: cubic-bezier(.34, 1.4, .64, 1);
+}

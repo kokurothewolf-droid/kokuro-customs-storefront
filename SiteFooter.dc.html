@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Site Footer</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.kf-foot{border-top:1px solid var(--k-accent);background:var(--k-bg);color:var(--k-ink);font-family:var(--k-font-body);padding:72px 0 28px}
+.kf-foot *{box-sizing:border-box}
+.kf-grid{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,.8fr)) minmax(0,1.4fr);gap:40px}
+.kf-logo{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.kf-wm{font-family:var(--k-font-display);font-style:italic;font-size:46px;line-height:1;-webkit-text-stroke:1.4px var(--k-ink)}
+.kf-slash{width:4px;height:34px;background:var(--k-accent);transform:skewX(-18deg)}
+.kf-sub{font-size:12px;font-weight:700;letter-spacing:.55em}
+.kf-h{margin:0 0 14px;font-size:12px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--k-accent-text)}
+.kf-a{display:block;min-height:36px;padding:0;background:none;border:0;text-align:left;font-size:15px;font-weight:500;color:var(--k-ink-soft)}
+.kf-a:hover{color:var(--k-ink);text-decoration:underline;text-decoration-color:var(--k-accent);text-decoration-thickness:3px;text-underline-offset:6px}
+.kf-news{display:flex;gap:10px;flex-wrap:wrap}
+.kf-news .k-field{flex:1 1 200px;width:auto}
+.kf-news button{min-height:48px;padding:0 22px;background:var(--k-accent);border:0;font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--k-on-accent)}
+.kf-news button:hover{background:var(--k-cream);color:var(--k-on-cream)}
+.kf-msg{margin:10px 0 0;min-height:20px;font-size:13px;font-weight:600}
+.kf-legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:56px;padding-top:22px;border-top:1px solid var(--k-line);font-size:12px;color:var(--k-muted)}
+.kf-foot button:focus-visible,.kf-foot input:focus-visible{outline:3px solid var(--k-ink);outline-offset:3px}
+@media (max-width:1000px){.kf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.kf-grid{grid-template-columns:minmax(0,1fr)}.kf-foot{padding-top:48px}}
+</style>
+</helmet>
+<footer class="kf-foot">
+<div class="k-wrap">
+<div class="kf-grid">
+<div>
+<div class="kf-logo"><span class="kf-wm">KOKURO</span><span class="kf-slash"></span><span class="kf-sub">CUSTOMS</span></div>
+<p style="margin: 0; max-width: 30ch; font-size: 15px; line-height: 1.6; color: #C9C5BE">Black wolf streetwear and custom prints. Made to stand out. Or blend in.</p>
+</div>
+<div>
+<h2 class="kf-h">Shop</h2>
+<sc-for list="{{ links }}" as="l" hint-placeholder-count="4">
+<button class="kf-a" onClick="{{ l.go }}">{{ l.label }}</button>
+</sc-for>
+</div>
+<div>
+<h2 class="kf-h">Kokuro</h2>
+<button class="kf-a" onClick="{{ onCustom }}">Custom Prints</button>
+<button class="kf-a" onClick="{{ onAbout }}">About</button>
+<button class="kf-a" onClick="{{ onCart }}">Cart</button>
+</div>
+<div>
+<h2 class="kf-h">Join the pack</h2>
+<form class="kf-news" onSubmit="{{ submit }}" novalidate="">
+<label class="k-sr" for="kf-email">Email address</label>
+<input id="kf-email" class="k-field" type="email" placeholder="you@email.com" value="{{ email }}" onChange="{{ onEmail }}" autocomplete="email">
+<button type="submit">Sign up</button>
+</form>
+<p class="kf-msg" role="status" style="color: {{ msgColor }}">{{ msg }}</p>
+</div>
+</div>
+<div class="kf-legal">
+<span>© 2026 Kokuro Customs. Demo storefront: no payments or fulfillment are connected.</span>
+<span lang="ja">黒狼</span>
+</div>
+</div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"links":{"editor":null},"onCustom":{"editor":null},"onAbout":{"editor":null},"onCart":{"editor":null},"onSubscribe":{"editor":null},"$preview":{"width":1440,"height":560}}'>
+class Component extends DCLogic {
+  state = { email: '', msg: '', msgColor: '#C9C5BE' };
+  renderVals() {
+    const p = this.props;
+    const noop = () => {};
+    return {
+      links: p.links || [{ label: 'All gear', go: noop }, { label: 'T-Shirts', go: noop }, { label: 'Hoodies', go: noop }, { label: 'Headwear', go: noop }],
+      onCustom: p.onCustom || noop, onAbout: p.onAbout || noop, onCart: p.onCart || noop,
+      email: this.state.email, msg: this.state.msg, msgColor: this.state.msgColor,
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      submit: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const email = (this.state.email || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          this.setState({ msg: 'Enter a valid email address.', msgColor: '#FF5A4D' });
+          return;
+        }
+        const done = () => this.setState({ email: '', msg: 'You are on the list. (Demo: nothing was sent.)', msgColor: '#F5F2ED' });
+        const r = p.onSubscribe ? p.onSubscribe(email) : null;
+        if (r && r.then) r.then(done); else done();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

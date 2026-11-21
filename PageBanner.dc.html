@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Page Banner</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.kb{position:relative;overflow:hidden;isolation:isolate;background-color:var(--k-bg);background-image:var(--k-texture);background-size:480px 320px;border-bottom:1px solid var(--k-line);color:var(--k-ink);font-family:var(--k-font-body)}
+.kb *{box-sizing:border-box}
+.kb-in{position:relative;display:flex;align-items:center;gap:28px;padding-top:56px;padding-bottom:48px;min-height:260px}
+.kb-kanji{margin:0;font-family:var(--k-font-jp);font-weight:900;font-size:60px;line-height:1;writing-mode:vertical-rl;letter-spacing:.06em;color:var(--k-ink)}
+.kb-h1{margin:0;font-size:clamp(68px,10vw,150px);line-height:.84;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.kb-sub{margin:14px 0 0;display:flex;align-items:center;gap:14px;font-size:13px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:var(--k-ink-dim)}
+.kb-sub img{height:24px;width:auto}
+.kb-art{position:absolute;right:0;bottom:0;z-index:-1;height:100%;width:auto;max-width:62%;object-fit:contain;object-position:right bottom}
+.kb-claw{position:absolute;right:-20px;top:-6px;z-index:-1;width:min(380px,40%);height:auto;opacity:.92}
+.kb-swoosh{display:block;width:min(360px,70%);height:auto;margin-top:6px}
+@media (max-width:760px){.kb-in{padding-top:36px;padding-bottom:32px;min-height:0}.kb-kanji{font-size:40px}.kb-art{max-width:90%;opacity:.45}}
+</style>
+</helmet>
+<section class="kb">
+<sc-if value="{{ isMountain }}" hint-placeholder-val="{{ false }}"><img class="kb-art" data-k-parallax="0.12" data-k-reveal="fade" src="./assets/d164f2ec5d403ddd31a3d107018ea8e3.svg" alt=""></sc-if>
+<sc-if value="{{ isClaw }}" hint-placeholder-val="{{ true }}"><img class="kb-claw" data-k-parallax="-0.22" data-k-reveal="slash" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></sc-if>
+<div class="k-wrap kb-in">
+<sc-if value="{{ hasKanji }}" hint-placeholder-val="{{ false }}"><p class="kb-kanji" lang="ja" aria-hidden="true">黒狼</p></sc-if>
+<div>
+<h1 class="k-display kb-h1"><span class="k-mask"><span style="display: block" data-k-reveal="line">{{ titleA }} <span class="k-red">{{ titleB }}</span></span></span></h1>
+<img class="kb-swoosh" data-k-reveal="draw" data-k-delay="0.3" src="./assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
+<p class="kb-sub" data-k-reveal="rise" data-k-delay="0.35"><img src="./assets/c463ac4d9b2b4802b28a81ce86960c45.svg" alt="">{{ subtitle }}</p>
+</div>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"titleA":{"editor":"text","default":"Shop the"},"titleB":{"editor":"text","default":"Collection"},"subtitle":{"editor":"text","default":"Apparel, accessories & custom gear"},"art":{"editor":"enum","options":["mountain","claw"],"default":"mountain"},"kanji":{"editor":"boolean","default":false},"$preview":{"width":1100,"height":320}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const art = p.art || 'mountain';
+    return {
+      titleA: p.titleA === undefined ? 'Shop the' : p.titleA,
+      titleB: p.titleB === undefined ? 'Collection' : p.titleB,
+      subtitle: p.subtitle === undefined ? 'Apparel, accessories & custom gear' : p.subtitle,
+      isMountain: art === 'mountain', isClaw: art === 'claw',
+      hasKanji: !!p.kanji
+    };
+  }
+}
+</script>
+</body>
+</html>

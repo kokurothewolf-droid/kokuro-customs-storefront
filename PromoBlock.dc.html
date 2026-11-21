@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Promo Block</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.kp{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:32px;align-items:center;overflow:hidden;min-height:260px;padding:28px 40px;background-color:var(--k-bg);background-image:var(--k-texture);background-size:480px 320px;border:1px solid var(--k-ink-dim);clip-path:polygon(24px 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 24px);color:var(--k-ink);font-family:var(--k-font-body)}
+.kp *{box-sizing:border-box}
+.kp-art{position:relative;height:210px}
+.kp-art .m{position:absolute;left:0;bottom:-8px;width:100%;height:auto;max-height:220px;object-fit:contain;object-position:left bottom}
+.kp-claw{position:absolute;right:-30px;bottom:-24px;width:200px;height:auto;opacity:.9}
+.kp-h{margin:0;font-size:clamp(44px,5vw,72px);line-height:.92}
+.kp-t{margin:14px 0 22px;font-size:13px;font-weight:700;letter-spacing:.34em;text-transform:uppercase;color:var(--k-ink-dim)}
+@media (max-width:760px){.kp{grid-template-columns:minmax(0,1fr);padding:24px 20px}.kp-art{height:150px}}
+</style>
+</helmet>
+<section class="kp">
+<img class="kp-claw" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
+<div class="kp-art" aria-hidden="true"><img class="m" src="./assets/d164f2ec5d403ddd31a3d107018ea8e3.svg" alt=""></div>
+<div style="position: relative">
+<h2 class="k-display kp-h">{{ titleA }} <span class="k-red">{{ titleB }}</span></h2>
+<p class="kp-t">{{ text }}</p>
+<button class="k-btn k-btn--ghost k-btn--sm" onClick="{{ onCta }}"><span>{{ cta }} <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"titleA":{"editor":"text","default":"Your cart is"},"titleB":{"editor":"text","default":"empty."},"text":{"editor":"text","default":"Find your next favorite piece."},"cta":{"editor":"text","default":"Shop the collection"},"onCta":{"editor":null},"$preview":{"width":1200,"height":380}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    return {
+      titleA: p.titleA === undefined ? 'Your cart is' : p.titleA,
+      titleB: p.titleB === undefined ? 'empty.' : p.titleB,
+      text: p.text === undefined ? 'Find your next favorite piece.' : p.text,
+      cta: p.cta === undefined ? 'Shop the collection' : p.cta,
+      onCta: p.onCta || (() => {})
+    };
+  }
+}
+</script>
+</body>
+</html>

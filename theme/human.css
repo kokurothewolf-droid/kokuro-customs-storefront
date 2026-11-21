@@ -1,0 +1,144 @@
+/* ==========================================================================
+   KOKURO CUSTOMS: HUMAN MODE THEME
+   One file owns every design token and every shared primitive.
+   Components and pages use these variables and k-* classes, never raw hexes.
+
+   FUTURE FURRY MODE: add theme/furry.css containing a
+   [data-theme="furry"] { ...same --k-* variables... } block (and any k-* class
+   overrides), link it in the shell, and flip data-theme on the root element
+   in Main.dc.html (state.theme). No component needs to change.
+   ========================================================================== */
+
+:root,
+[data-theme="human"] {
+  /* color */
+  --k-bg: #0B0B0B;
+  --k-surface: #1A1A1A;
+  --k-surface-2: #101010;
+  --k-line: #2A2A2A;
+  --k-line-strong: #3A3A3A;
+  --k-ink: #F5F2ED;
+  --k-ink-soft: #D8D4CD;
+  --k-ink-dim: #C9C5BE;
+  --k-muted: #9A9A9A;
+  --k-accent: #D71925;          /* fills and display type 24px+ */
+  --k-accent-text: #FF5A4D;     /* small accent text on dark (4.5:1+) */
+  --k-accent-on-light: #B3111C; /* accent text on cream */
+  --k-on-accent: #F5F2ED;
+  --k-cream: #F5F2ED;
+  --k-on-cream: #0B0B0B;
+  /* type */
+  --k-font-display: 'Bebas Neue', 'Arial Narrow', Impact, sans-serif;
+  --k-font-body: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --k-font-accent: 'Permanent Marker', 'Bebas Neue', cursive;
+  --k-font-jp: 'Noto Serif JP', 'Yu Mincho', serif;
+  /* shape */
+  --k-skew: -10deg;
+  --k-gutter: 32px;
+  --k-max: 1360px;
+  /* texture (uploaded brand asset) */
+  --k-texture: url(../assets/fc35f148840560cbd9f2bc097d49f2f2.svg);
+  /* motion tokens: read by motion/kokuro-motion.js, so a theme can retime the
+     whole site from CSS. Human Mode = sharp, decisive, expo-out. */
+  --k-m-dur: 0.9;              /* seconds, default reveal */
+  --k-m-stagger: 0.07;         /* seconds between items revealed in one batch */
+  --k-m-rise: 40;              /* px */
+  --k-m-ease: cubic-bezier(.16, 1, .3, 1);
+  --k-m-ease-io: cubic-bezier(.76, 0, .24, 1);
+  --k-m-gsap-ease: expo.out;
+  --k-m-gsap-ease-io: expo.inOut;
+}
+
+/* ===== motion hooks (see motion/kokuro-motion.js) ========================
+   Content is visible by default. Elements are hidden only after the motion
+   script arms the page (html.k-motion), and never under reduced motion. */
+html.k-motion [data-k-reveal]:not([data-k-run]):not([data-k-done]) { opacity: 0; }
+@media (prefers-reduced-motion: reduce), print {
+  html.k-motion [data-k-reveal] { opacity: 1 !important; }
+}
+.k-mask { display: block; overflow: hidden; padding: .06em .12em .03em 0; margin-right: -.12em; }
+canvas[data-k-gl] { opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--k-bg); color: var(--k-ink); font-family: var(--k-font-body); -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+img { display: block; }
+
+.k-root { background: var(--k-bg); color: var(--k-ink); font-family: var(--k-font-body); min-height: 100%; overflow-x: hidden; text-wrap: pretty; }
+.k-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.k-wrap { max-width: var(--k-max); margin: 0 auto; padding-left: var(--k-gutter); padding-right: var(--k-gutter); width: 100%; }
+.k-anchor { scroll-margin-top: 84px; }
+
+/* focus */
+.k-root button:focus-visible, .k-root input:focus-visible, .k-root select:focus-visible, .k-root textarea:focus-visible, .k-root a:focus-visible { outline: 3px solid var(--k-ink); outline-offset: 3px; }
+.k-on-cream button:focus-visible, .k-on-cream a:focus-visible, .k-on-accent button:focus-visible { outline-color: var(--k-on-cream); }
+
+/* type */
+.k-display { font-family: var(--k-font-display); font-weight: 400; font-style: italic; text-transform: uppercase; letter-spacing: .012em; }
+.k-eyebrow { margin: 0; font-size: 12px; line-height: 1; font-weight: 700; letter-spacing: .34em; text-transform: uppercase; color: var(--k-accent-text); }
+.k-on-cream .k-eyebrow { color: var(--k-accent-on-light); }
+.k-red { color: var(--k-accent); }
+.k-muted { color: var(--k-muted); }
+.k-section-title { margin: 0; font-size: clamp(48px, 6vw, 88px); line-height: .9; }
+
+/* buttons: skewed, never rounded */
+.k-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 54px; padding: 0 34px; background: var(--k-accent); color: var(--k-on-accent); border: 0; font-family: var(--k-font-display); font-style: italic; font-size: 25px; letter-spacing: .07em; text-transform: uppercase; transform: skewX(var(--k-skew)); transition: background .2s, color .2s, transform .2s; }
+.k-btn > span { display: inline-flex; align-items: center; gap: 12px; transform: skewX(calc(var(--k-skew) * -1)); }
+.k-btn:hover:not(:disabled) { background: var(--k-cream); color: var(--k-on-cream); transform: skewX(var(--k-skew)) translateX(5px); }
+.k-btn:disabled { background: var(--k-line); color: var(--k-muted); cursor: not-allowed; }
+.k-btn--dark { background: var(--k-bg); }
+.k-btn--ghost { background: transparent; box-shadow: inset 0 0 0 2px var(--k-ink); }
+.k-btn--ghost:hover:not(:disabled) { background: var(--k-ink); color: var(--k-on-cream); }
+.k-btn--sm { min-height: 44px; padding: 0 22px; font-size: 21px; }
+.k-btn--block { display: flex; width: 100%; }
+.k-link { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; background: none; border: 0; padding: 0; font-size: 13px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; border-bottom: 3px solid var(--k-accent); }
+.k-link:hover { border-bottom-color: currentColor; }
+
+/* chips / pills (filters, sizes) */
+.k-chip { min-height: 44px; min-width: 52px; padding: 0 18px; background: transparent; border: 1px solid var(--k-line-strong); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; transform: skewX(var(--k-skew)); transition: background .2s, border-color .2s, color .2s; }
+.k-chip > span { display: block; transform: skewX(calc(var(--k-skew) * -1)); }
+.k-chip:hover:not(:disabled) { border-color: var(--k-ink); }
+.k-chip[aria-pressed="true"] { background: var(--k-accent); border-color: var(--k-accent); color: var(--k-on-accent); }
+.k-chip:disabled { color: #6A6A6A; border-style: dashed; cursor: not-allowed; text-decoration: line-through; }
+.k-chip--sm { min-height: 36px; min-width: 40px; padding: 0 12px; font-size: 12px; }
+
+/* swatches */
+.k-swatch { position: relative; width: 44px; height: 44px; padding: 0; background: none; border: 0; }
+.k-swatch i { display: block; width: 28px; height: 28px; margin: auto; border: 1px solid var(--k-line-strong); }
+.k-swatch[aria-pressed="true"]::after { content: ""; position: absolute; inset: 4px; border: 2px solid var(--k-accent); }
+
+/* form fields */
+.k-label { display: block; margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: var(--k-ink); }
+.k-label b { color: var(--k-accent-text); font-weight: 800; }
+.k-field { display: block; width: 100%; min-height: 48px; padding: 0 14px; background: var(--k-surface); border: 1px solid var(--k-line-strong); color: var(--k-ink); font: 500 15px var(--k-font-body); }
+textarea.k-field { padding: 12px 14px; line-height: 1.55; resize: vertical; min-height: 108px; }
+.k-field::placeholder { color: var(--k-muted); }
+.k-field[aria-invalid="true"] { border-color: var(--k-accent-text); }
+.k-err { margin: 6px 0 0; min-height: 18px; font-size: 12px; font-weight: 600; color: var(--k-accent-text); }
+
+/* tag / badge */
+.k-tag { display: inline-block; padding: 6px 16px 6px 12px; background: var(--k-accent); color: var(--k-on-accent); font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%); }
+.k-badge { display: flex; align-items: center; gap: 16px; padding: 18px 22px; background: var(--k-surface); border: 1px solid var(--k-line); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%); }
+.k-badge svg { flex: none; color: var(--k-accent-text); }
+.k-badge b { display: block; font-family: var(--k-font-display); font-style: italic; font-weight: 400; font-size: 24px; letter-spacing: .04em; text-transform: uppercase; }
+.k-badge span { display: block; margin-top: 2px; font-size: 13px; color: var(--k-ink-dim); }
+
+/* panel: chamfered, red-keyline (order summary, inquiry form) */
+.k-panel { position: relative; padding: 28px; background: var(--k-bg); border: 1px solid var(--k-accent); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%); }
+.k-panel--light { border-color: var(--k-ink-dim); }
+
+/* art tile: brand graphic on texture, stands in for missing product photos */
+.k-art { display: flex; align-items: center; justify-content: center; background-color: var(--k-surface-2); background-image: var(--k-texture); background-size: 420px 280px; }
+.k-art img { width: 56%; height: 56%; object-fit: contain; }
+
+/* motion (reduced-motion safe) */
+@media (prefers-reduced-motion: no-preference) {
+  .k-rise { animation: k-rise .9s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes k-rise { from { opacity: 0; transform: translateY(34px) skewX(-6deg); } to { opacity: 1; transform: none; } }
+}
+
+@media (max-width: 860px) {
+  :root, [data-theme="human"] { --k-gutter: 16px; }
+  .k-btn { padding: 0 26px; font-size: 23px; }
+}

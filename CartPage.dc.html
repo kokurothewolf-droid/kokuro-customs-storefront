@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Cart Page</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.cg{color:var(--k-ink);font-family:var(--k-font-body)}
+.cg-body{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:48px;align-items:start;padding-top:36px;padding-bottom:40px}
+.cg-head{display:grid;grid-template-columns:minmax(0,1fr) 110px 150px 110px 44px;gap:20px;padding:0 0 12px;border-bottom:1px solid var(--k-ink-dim);font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.cg-sum{position:sticky;top:96px}
+.cg-sum h2{margin:0 0 14px;font-size:38px;line-height:1}
+.cg-r{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--k-line-strong);font-size:16px}
+.cg-r span:last-child{font-weight:700}
+.cg-r.dim span:last-child{font-weight:500;color:var(--k-ink-dim)}
+.cg-t{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0 20px;font-family:var(--k-font-display);font-style:italic;text-transform:uppercase}
+.cg-t span:first-child{font-size:34px}.cg-t span:last-child{font-size:42px}
+.cg-fine{margin:12px 0 0;font-size:12px;line-height:1.5;color:var(--k-muted)}
+.cg-cont{padding:6px 0 48px}
+.cg-promo{padding:8px 0 56px}
+.cg-more{padding:56px 0 72px;background:var(--k-surface-2);border-top:1px solid var(--k-line)}
+.cg-more h2{margin:0 0 28px;font-size:clamp(44px,5vw,72px);line-height:.9}
+.cg-rel{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:20px}
+@media (max-width:1000px){.cg-body{grid-template-columns:minmax(0,1fr);gap:28px}.cg-sum{position:static}}
+@media (max-width:860px){.cg-head{display:none}}
+</style>
+</helmet>
+<div class="cg k-root" style="min-height: 0">
+<dc-import name="PageBanner" title-a="Your" title-b="Cart" subtitle="" art="claw" kanji="{{ true }}" hint-size="100%,260px"></dc-import>
+
+<sc-if value="{{ hasLines }}" hint-placeholder-val="{{ true }}">
+<div class="k-wrap cg-body">
+<section aria-label="Cart items">
+<div class="cg-head" aria-hidden="true"><span>Item</span><span>Price</span><span>Quantity</span><span>Total</span><span></span></div>
+<sc-for list="{{ lines }}" as="l" hint-placeholder-count="2">
+<dc-import name="CartLineItem" line="{{ l }}" hint-size="100%,150px"></dc-import>
+</sc-for>
+<div class="cg-cont"><button class="k-link" onClick="{{ onContinue }}" style="margin-top: 22px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"></path></svg> Continue shopping</button></div>
+</section>
+<aside class="k-panel cg-sum" aria-labelledby="cg-sum-h">
+<h2 id="cg-sum-h" class="k-display">Order summary</h2>
+<div class="cg-r"><span>Subtotal ({{ count }} {{ itemWord }})</span><span>{{ subtotalLabel }}</span></div>
+<div class="cg-r dim"><span>Shipping</span><span>Calculated at checkout</span></div>
+<div class="cg-t"><span>Total</span><span>{{ subtotalLabel }}</span></div>
+<button class="k-btn k-btn--block" disabled="{{ true }}"><span>Checkout <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
+<p class="cg-fine">Checkout is not connected yet. Taxes and shipping are calculated there once payments exist.</p>
+</aside>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+<div class="k-wrap cg-promo" style="padding-top: 40px">
+<dc-import name="PromoBlock" on-cta="{{ onShop }}" hint-size="100%,300px"></dc-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasRelated }}" hint-placeholder-val="{{ false }}">
+<section class="cg-more" aria-labelledby="cg-more-h">
+<div class="k-wrap">
+<h2 id="cg-more-h" class="k-display">You may also like</h2>
+<div class="cg-rel">
+<sc-for list="{{ related }}" as="r" hint-placeholder-count="3">
+<dc-import name="ProductCard" item="{{ r }}" hint-size="100%,600px"></dc-import>
+</sc-for>
+</div>
+</div>
+</section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lines":{"editor":null},"related":{"editor":null},"count":{"editor":"int","default":0},"subtotalLabel":{"editor":null},"onContinue":{"editor":null},"onShop":{"editor":null},"$preview":{"width":1440,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const lines = p.lines || [];
+    const related = p.related || [];
+    const noop = () => {};
+    const count = p.count || 0;
+    return {
+      lines, hasLines: lines.length > 0, isEmpty: lines.length === 0,
+      count, itemWord: count === 1 ? 'item' : 'items',
+      subtotalLabel: p.subtotalLabel || '$0.00',
+      related, hasRelated: related.length > 0,
+      onContinue: p.onContinue || noop, onShop: p.onShop || noop
+    };
+  }
+}
+</script>
+</body>
+</html>

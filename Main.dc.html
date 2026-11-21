@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kokuro Customs Storefront</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="./theme/human.css">
+<link rel="stylesheet" href="./theme/furry.css">
+<script src="./motion/kokuro-motion.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;family=Permanent+Marker&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0B0B0B}</style>
+</helmet>
+<div class="k-root" data-theme="{{ theme }}">
+
+<div style="position: sticky; top: 0; z-index: 40">
+<dc-import name="SiteHeader" active="{{ activeNav }}" cart-count="{{ cartCount }}" query="{{ query }}" on-query="{{ onQuery }}" on-home="{{ goHome }}" on-shop="{{ goShopAll }}" on-custom="{{ goCustom }}" on-about="{{ goAbout }}" on-cart="{{ goCart }}" furry="{{ isFurry }}" on-toggle-mode="{{ exitFurry }}" hint-size="100%,70px"></dc-import>
+</div>
+
+<sc-if value="{{ isHumanHome }}" hint-placeholder-val="{{ true }}">
+<main><dc-import name="HomePage" tiles="{{ tiles }}" cat-rows="{{ catRows }}" on-shop="{{ goShopAll }}" on-custom="{{ goCustom }}" hint-size="100%,4000px"></dc-import></main>
+</sc-if>
+
+<sc-if value="{{ isFurryHome }}" hint-placeholder-val="{{ false }}">
+<main><dc-import name="FurryHome" on-shop="{{ goShopAll }}" on-custom="{{ goCustom }}" on-human="{{ exitFurry }}" hint-size="100%,1900px"></dc-import></main>
+</sc-if>
+
+<sc-if value="{{ isShop }}" hint-placeholder-val="{{ false }}">
+<main><dc-import name="ShopPage" banner-a="{{ bannerA }}" banner-b="{{ bannerB }}" list-title="{{ listTitle }}" filter-model="{{ filterModel }}" results="{{ results }}" layout="{{ layout }}" on-layout="{{ setLayout }}" sort="{{ sort }}" on-sort="{{ onSort }}" on-clear="{{ clearFilters }}" hint-size="100%,1800px"></dc-import></main>
+</sc-if>
+
+<sc-if value="{{ isProduct }}" hint-placeholder-val="{{ false }}">
+<main><dc-import name="ProductDetail" product="{{ pdp }}" related="{{ related }}" on-add="{{ pdpAdd }}" on-back="{{ pdpBack }}" on-shop-all="{{ goShopAll }}" on-home="{{ goHome }}" hint-size="100%,1400px"></dc-import></main>
+</sc-if>
+
+<sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}">
+<main><dc-import name="CustomPage" on-inquiry="{{ onInquiry }}" hint-size="100%,2400px"></dc-import></main>
+</sc-if>
+
+<sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
+<main><dc-import name="CartPage" lines="{{ cartLines }}" count="{{ cartCount }}" subtotal-label="{{ subtotalLabel }}" related="{{ cartRelated }}" on-continue="{{ goShopAll }}" on-shop="{{ goShopAll }}" hint-size="100%,1400px"></dc-import></main>
+</sc-if>
+
+<dc-import name="SiteFooter" links="{{ footerLinks }}" on-custom="{{ goCustom }}" on-about="{{ goAbout }}" on-cart="{{ goCart }}" on-subscribe="{{ onSubscribe }}" hint-size="100%,420px"></dc-import>
+
+<dc-import name="CartDrawer" open="{{ cartOpen }}" lines="{{ cartLines }}" count="{{ cartCount }}" subtotal-label="{{ subtotalLabel }}" on-close="{{ closeCart }}" on-shop="{{ goShopFromCart }}" on-view-cart="{{ viewCartFromDrawer }}" hint-size="0,0"></dc-import>
+
+<dc-import name="FurryPrompt" visible="{{ showFurryPrompt }}" busy="{{ furryBusy }}" on-enter="{{ enterFurry }}" hint-size="0,0"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5200}}'>
+class Component extends DCLogic {
+  state = {
+    theme: 'human',          // future: 'furry' (see theme/human.css header)
+    view: 'home',            // home | shop | product | custom | cart
+    productId: null,
+    category: 'all', query: '', sort: 'featured', layout: 'grid',
+    maxPrice: null, color: '', size: '',
+    cartOpen: false, cart: [], products: [],
+    furryBusy: false
+  };
+
+  componentDidMount() {
+    const api = this.api();
+    api.listProducts().then((products) => this.setState({ products }));
+    api.getCart().then((cart) => this.setState({ cart }));
+    // Restore the saved mode without any animation. Cart and view state are untouched.
+    try { if (window.localStorage.getItem('kokuro.mode.v1') === 'furry') this.setState({ theme: 'furry' }); } catch (e) {}
+    // Public theme API. Human -> Furry plays the Matrix intro (see MOTION.md);
+    // Furry -> Human uses the short claw transition. Cart and routing state are never reset.
+    window.KokuroApp = {
+      theme: () => this.state.theme,
+      setTheme: (next) => (next === 'furry' ? this.enterFurry() : this.exitFurry()),
+      enterFurry: () => this.enterFurry(),
+      exitFurry: () => this.exitFurry()
+    };
+  }
+
+  componentWillUnmount() {
+    if (window.KokuroMatrixIntro) window.KokuroMatrixIntro.close();
+  }
+
+  persistMode(mode) {
+    try { window.localStorage.setItem('kokuro.mode.v1', mode); } catch (e) {}
+  }
+
+  // Human -> Furry. Guarded: rapid clicks, repeated calls and re-entry are ignored while busy.
+  enterFurry() {
+    if (this._furryBusy || this.state.theme === 'furry') return Promise.resolve();
+    this._furryBusy = true;
+    this.setState({ furryBusy: true });
+    const km = window.KokuroMotion;
+    const activate = () => {
+      this.persistMode('furry');
+      this.setState({ theme: 'furry', view: 'home', productId: null, cartOpen: false });
+      try { window.scrollTo(0, 0); } catch (e) {}
+    };
+    const done = () => {
+      this._furryBusy = false;
+      this.setState({ furryBusy: false });
+      setTimeout(() => {
+        const h = document.getElementById('fh-title');
+        if (h) { try { h.focus({ preventScroll: true }); } catch (e) {} }
+      }, 60);
+    };
+    if (!km || !km.loadMatrixIntro) { activate(); done(); return Promise.resolve(); }
+    return km.loadMatrixIntro().then((intro) => intro.play({
+      reduced: km.tier() === 'none',
+      pageRoot: document.querySelector('.k-root'),
+      onBeforeReveal: activate
+    })).then((res) => {
+      done();
+      return res;
+    }, () => {
+      // Loading failed (offline, blocked): fall back to the claw transition, never leave a dead button.
+      return Promise.resolve(km.transition({ mode: 'theme', swap: activate })).then(done, done);
+    });
+  }
+
+  // Furry -> Human. Never replays the Matrix intro.
+  exitFurry() {
+    if (this._furryBusy || this.state.theme !== 'furry') return Promise.resolve();
+    this._furryBusy = true;
+    const km = window.KokuroMotion;
+    const swap = () => { this.persistMode('human'); this.setState({ theme: 'human', view: 'home', productId: null }); };
+    const done = () => { this._furryBusy = false; };
+    if (!km) { swap(); done(); return Promise.resolve(); }
+    return Promise.resolve(km.transition({ mode: 'page', swap })).then(done, done);
+  }
+
+  /* ======================================================================
+     DATA ACCESS LAYER: the single seam for the backend agent.
+     Every method returns a Promise. Replace the bodies with fetch() calls;
+     nothing else in the app touches storage, mock data or the network.
+     Payload shapes are in HANDOFF.md.
+     ====================================================================== */
+  api() {
+    const KEY = 'kokuro.cart.v2';
+    return {
+      // GET /api/products
+      listProducts: () => Promise.resolve(this.mockCatalog()),
+      // GET /api/cart
+      getCart: () => {
+        let cart = [];
+        try { cart = JSON.parse(window.localStorage.getItem(KEY) || '[]'); } catch (e) { cart = []; }
+        return Promise.resolve(Array.isArray(cart) ? cart : []);
+      },
+      // PUT /api/cart  body: { lines: CartLine[] }
+      saveCart: (cart) => {
+        try { window.localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {}
+        return Promise.resolve({ ok: true });
+      },
+      // POST /api/newsletter  body: { email }
+      subscribe: (email) => Promise.resolve({ ok: true, email }),
+      // POST /api/custom-inquiries  body: Inquiry
+      submitInquiry: (payload) => Promise.resolve({ ok: true, id: 'demo-inquiry' })
+    };
+  }
+
+  assets() {
+    return {
+      crest: './assets/b9ea5f2df029c70d00aa70ae7c352a23.svg',
+      paw: './assets/ae9a7a1d8a4e5b0a3b08010fe19a46c4.svg',
+      claw: './assets/93eba917cff886a4ae1ea570c6b387ab.svg',
+      mountain: './assets/d164f2ec5d403ddd31a3d107018ea8e3.svg',
+      tee: './assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp',
+      hoodie: './assets/fe2219d4ba1b72dbdabcc0396e5dbed0.webp',
+      cap: './assets/b531ac5cb13dc13829e00eaeca6b7fc6.webp',
+      hero: './assets/6c0b2281e740e00a74a4bc95e137d10f.webp'
+    };
+  }
+
+  categories() {
+    return [
+      { id: 'tees', label: 'T-Shirts', group: 'apparel' },
+      { id: 'hoodies', label: 'Hoodies', group: 'apparel' },
+      { id: 'headwear', label: 'Headwear', group: 'apparel' },
+      { id: 'drinkware', label: 'Drinkware', group: 'drinkware' },
+      { id: 'desk-gear', label: 'Desk Gear', group: 'desk-gear' },
+      { id: 'stickers', label: 'Stickers', group: 'stickers' }
+    ];
+  }
+
+  /* MOCK DATA: all names, prices, stock, colors, policies and counts are
+     placeholders. Money is integer cents. */
+  mockCatalog() {
+    const cats = {}; this.categories().forEach((c) => { cats[c.id] = c; });
+    const COLORS = {
+      black: { id: 'black', label: 'Black', hex: '#111111' },
+      charcoal: { id: 'charcoal', label: 'Charcoal', hex: '#3A3A3A' },
+      bone: { id: 'bone', label: 'Bone', hex: '#E9E3D8' },
+      crimson: { id: 'crimson', label: 'Crimson', hex: '#8E1119' }
+    };
+    const slug = (l) => l.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const build = (colorIds, sizeLabels, price, oos, priceFor) => {
+      const colors = colorIds.map((i) => COLORS[i]);
+      const sizes = sizeLabels.map((l) => ({ id: slug(l), label: l }));
+      const variants = [];
+      colors.forEach((c) => sizes.forEach((s) => variants.push({
+        id: c.id + '/' + s.id, colorId: c.id, sizeId: s.id,
+        priceCents: priceFor ? priceFor(s.label) : price,
+        inStock: !(oos && oos(c.id, s.label))
+      })));
+      return { colors, sizes, variants };
+    };
+    const APP = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
+    const A = this.assets();
+    const ph = (src, pos, zoom) => ({ kind: 'photo', src, pos, zoom: zoom || 1 });
+    const art = (k) => ({ kind: 'art', art: k });
+    const P = (o) => Object.assign({ tag: '', sizeNoun: 'Size' }, o, { categoryLabel: cats[o.category].label, group: cats[o.category].group, media: o.gallery[0] });
+    return [
+      P({ id: 'lone-wolf-tee', sku: 'KC-TEE-001', name: 'Lone Wolf Tee', category: 'tees',
+        blurb: 'A bold take on solitude and strength. A howling wolf, a pale moon and red leaves, printed on a clean, wear-anywhere black tee. Made to order.',
+        gallery: [ph(A.tee, '50% 40%'), ph(A.hero, '80% 62%'), ph(A.tee, '35% 25%', 1.7)],
+        ...build(['black', 'charcoal', 'bone', 'crimson'], APP, 2800, (c, s) => c === 'bone' && s === '3XL') }),
+      P({ id: 'red-moon-tee', sku: 'KC-TEE-002', name: 'Red Moon Wolf Tee', category: 'tees', tag: 'New',
+        blurb: 'The snarling wolf under a blood-red moon, on an oversized black tee. Made to order.',
+        gallery: [ph(A.hero, '80% 62%'), ph(A.hero, '78% 55%', 1.7)],
+        ...build(['black', 'charcoal'], APP, 3200) }),
+      P({ id: 'kokuro-hoodie', sku: 'KC-HOO-001', name: 'Kokuro Hoodie', category: 'hoodies', tag: 'New',
+        blurb: 'Red slash print across black, with the 黒狼 patch between the shoulders. Made to order.',
+        gallery: [ph(A.hoodie, '50% 30%'), ph(A.hoodie, '50% 55%', 1.7)],
+        ...build(['crimson', 'black'], APP, 5800, (c, s) => c === 'crimson' && s === '3XL') }),
+      P({ id: 'wildpaw-cap', sku: 'KC-CAP-001', name: 'Wildpaw Cap', category: 'headwear', sizeNoun: 'Fit',
+        blurb: 'Washed black cap with an embroidered paw and three red claw marks.',
+        gallery: [ph(A.cap, '50% 50%'), ph(A.cap, '30% 35%', 1.8)],
+        ...build(['black', 'charcoal', 'bone'], ['One size'], 2600) }),
+      P({ id: 'howl-moon-mug', sku: 'KC-MUG-001', name: 'Howl Moon Mug', category: 'drinkware',
+        blurb: 'Black mug with the wolf and moon wrapped around it.',
+        gallery: [art('mountain')],
+        ...build(['black'], ['11 oz', '15 oz'], 1800, null, (l) => (l === '15 oz' ? 2200 : 1800)) }),
+      P({ id: 'blood-moon-tumbler', sku: 'KC-TUM-001', name: 'Blood Moon Tumbler', category: 'drinkware',
+        blurb: 'Insulated tumbler for the long walk home, red moon on black.',
+        gallery: [art('crest')], ...build(['black'], ['20 oz'], 3200) }),
+      P({ id: 'claw-desk-mat', sku: 'KC-MAT-001', name: 'Claw Desk Mat', category: 'desk-gear',
+        blurb: 'Full-width desk mat with red claw slashes across black.',
+        gallery: [art('claw')], ...build(['black'], ['Large'], 3400) }),
+      P({ id: 'wildpaw-mousepad', sku: 'KC-PAD-001', name: 'Wildpaw Mousepad', category: 'desk-gear',
+        blurb: 'The paw mark on a dark, grippy surface.',
+        gallery: [art('paw')], ...build(['black'], ['Standard'], 2200) }),
+      P({ id: 'crest-sticker-pack', sku: 'KC-STK-001', name: 'Wolf Crest Sticker Pack', category: 'stickers', sizeNoun: 'Pack',
+        blurb: 'Wolf crest decals for laptops, lockers and anything else that stands still.',
+        gallery: [art('crest')], ...build(['black'], ['Standard pack'], 1200) }),
+      P({ id: 'claw-slash-decal', sku: 'KC-STK-002', name: 'Claw Slash Decal', category: 'stickers', sizeNoun: 'Pack',
+        blurb: 'Three red slashes. Peel, stick, leave a mark.',
+        gallery: [art('claw')], ...build(['black'], ['Single decal'], 800) })
+    ].map((p) => Object.assign(p, { policies: { shipping: 'Standard 5-8 business days', returns: '30-day returns, unworn and unwashed', quality: 'Premium print and materials built to last' } }));
+  }
+
+  money(c) { return '$' + (c / 100).toFixed(2); }
+  toTop() { try { window.scrollTo(0, 0); if (document.scrollingElement) document.scrollingElement.scrollTop = 0; } catch (e) {} }
+  scrollToId(id) { setTimeout(() => { try { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }, 90); }
+
+  commitCart(cart, open) {
+    this.setState(open ? { cart, cartOpen: true } : { cart });
+    this.api().saveCart(cart);
+    if (open && window.KokuroMotion) setTimeout(() => window.KokuroMotion.pulse('.kh-count'), 80);
+  }
+
+  addToCart(productId, variantId, qty) {
+    const q = Math.max(1, Math.min(99, qty || 1));
+    const cart = this.state.cart.map((l) => ({ ...l }));
+    const hit = cart.find((l) => l.productId === productId && l.variantId === variantId);
+    if (hit) hit.qty = Math.min(99, hit.qty + q);
+    else cart.push({ lineId: 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), productId, variantId, qty: q });
+    this.commitCart(cart, true);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const A = this.assets();
+    const money = (c) => this.money(c);
+    const cats = this.categories();
+    const byId = {};
+    s.products.forEach((p) => { byId[p.id] = p; });
+
+    // Route changes play the short claw-slash wipe. Cart and checkout-adjacent
+    // moves are instant so the buying path is never delayed or blocked.
+    const go = (patch, opts) => {
+      const km = window.KokuroMotion;
+      const apply = () => { this.setState(patch); this.toTop(); };
+      if (km && !(opts && opts.instant)) km.transition({ mode: 'page', swap: apply });
+      else apply();
+    };
+    const goHome = () => go({ view: 'home', productId: null });
+    const goShop = (category) => () => go({ view: 'shop', category: category || 'all', query: '', color: '', size: '', maxPrice: null, productId: null });
+    const openProduct = (id) => go({ view: 'product', productId: id });
+    const openProductQuick = (id) => go({ view: 'product', productId: id }, { instant: true });
+    const goAbout = () => {
+      if (this.state.view === 'home') this.scrollToId('kc-about');
+      else { this.setState({ view: 'home', productId: null }); this.scrollToId('kc-about'); }
+    };
+
+    // ---- view models -------------------------------------------------
+    const minPrice = (p) => Math.min.apply(null, p.variants.map((v) => v.priceCents));
+    const mediaVM = (m) => (m.kind === 'photo'
+      ? { hasPhoto: true, image: m.src, imagePos: m.pos, zoom: m.zoom || 1, artUrl: '' }
+      : { hasPhoto: false, image: '', imagePos: '50% 50%', zoom: 1, artUrl: A[m.art] });
+    const toCard = (p) => {
+      const prices = p.variants.map((v) => v.priceCents);
+      const min = Math.min.apply(null, prices);
+      const varies = Math.max.apply(null, prices) !== min;
+      const quick = p.variants.length === 1;
+      return Object.assign({
+        id: p.id, name: p.name, categoryLabel: p.categoryLabel, tag: p.tag,
+        priceLabel: (varies ? 'From ' : '') + money(min),
+        swatches: p.colors.slice(0, 4).map((c) => ({ hex: c.hex, label: c.label })),
+        sizeLabels: p.sizes.length > 6 ? p.sizes.slice(0, 6).map((z) => z.label) : p.sizes.map((z) => z.label),
+        cta: quick ? 'Add +' : 'Options',
+        open: () => openProduct(p.id),
+        act: quick ? () => this.addToCart(p.id, p.variants[0].id, 1) : () => openProduct(p.id)
+      }, mediaVM(p.media));
+    };
+
+    const catRows = [
+      { id: 'apparel', label: 'Apparel', sub: 'Tees, Hoodies & More', thumb: A.tee, photo: true },
+      { id: 'drinkware', label: 'Drinkware', sub: 'Mugs, Bottles & Tumblers', thumb: A.mountain, photo: false },
+      { id: 'desk-gear', label: 'Desk Gear', sub: 'Mousepads, Mats & More', thumb: A.claw, photo: false },
+      { id: 'stickers', label: 'Stickers', sub: 'Decals, Art & Collectibles', thumb: A.crest, photo: false }
+    ].map((c, i) => {
+      const n = s.products.filter((p) => p.group === c.id).length;
+      return { n: '0' + (i + 1), label: c.label, sub: c.sub, countLabel: n + (n === 1 ? ' piece' : ' pieces'),
+        hasPhoto: c.photo, noPhoto: !c.photo, image: c.photo ? c.thumb : '', artUrl: c.photo ? '' : c.thumb, select: goShop(c.id) };
+    });
+
+    const tiles = ['lone-wolf-tee', 'kokuro-hoodie', 'wildpaw-cap'].map((id) => byId[id]).filter(Boolean).map(toCard);
+
+    // shop filtering
+    const matchesCat = (p) => s.category === 'all' || p.category === s.category || p.group === s.category;
+    const q = s.query.trim().toLowerCase();
+    const maxBound = s.products.length ? Math.ceil(Math.max.apply(null, s.products.map((p) => Math.max.apply(null, p.variants.map((v) => v.priceCents)))) / 100) : 100;
+    const minBound = s.products.length ? Math.floor(Math.min.apply(null, s.products.map(minPrice)) / 100) : 0;
+    const priceCap = s.maxPrice === null ? maxBound : s.maxPrice;
+    let list = s.products.filter((p) => matchesCat(p)
+      && (!q || (p.name + ' ' + p.categoryLabel).toLowerCase().indexOf(q) !== -1)
+      && minPrice(p) <= priceCap * 100
+      && (!s.color || p.colors.some((c) => c.id === s.color))
+      && (!s.size || p.sizes.some((z) => z.label === s.size)));
+    if (s.sort === 'price-asc') list.sort((a, b) => minPrice(a) - minPrice(b));
+    else if (s.sort === 'price-desc') list.sort((a, b) => minPrice(b) - minPrice(a));
+    else if (s.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+    const results = list.map(toCard);
+
+    const catHit = cats.find((c) => c.id === s.category);
+    const groupLabels = { apparel: 'Apparel', drinkware: 'Drinkware', 'desk-gear': 'Desk Gear', stickers: 'Stickers' };
+    const catLabel = catHit ? catHit.label : (groupLabels[s.category] || '');
+
+    const filtersActive = !!(s.color || s.size || s.maxPrice !== null || s.query);
+    const clearFilters = () => this.setState({ category: 'all', query: '', color: '', size: '', maxPrice: null, sort: 'featured' });
+    const allColors = [];
+    s.products.forEach((p) => p.colors.forEach((c) => { if (!allColors.some((x) => x.id === c.id)) allColors.push(c); }));
+    const filterModel = {
+      categories: [{ id: 'all', label: 'All Products', group: '' }].concat(cats).map((c) => {
+        const n = c.id === 'all' ? s.products.length : s.products.filter((p) => p.category === c.id).length;
+        const current = s.category === c.id || (c.group && s.category === c.group);
+        return { label: c.label, countLabel: '(' + n + ')', current: !!current, select: goShop(c.id) };
+      }).concat([{ label: 'Custom Prints', countLabel: '›', current: false, select: () => go({ view: 'custom' }) }]),
+      priceMin: minBound, priceMax: maxBound, priceValue: priceCap,
+      priceMinLabel: '$' + minBound, priceValueLabel: '$' + priceCap,
+      onPrice: (e) => this.setState({ maxPrice: parseInt(e.target.value, 10) }),
+      colors: allColors.map((c) => ({ label: c.label, hex: c.hex, pressed: s.color === c.id, select: () => this.setState({ color: s.color === c.id ? '' : c.id }) })),
+      sizes: ['S', 'M', 'L', 'XL', '2XL', '3XL'].map((z) => ({ label: z, pressed: s.size === z, select: () => this.setState({ size: s.size === z ? '' : z }) })),
+      hasActive: filtersActive || s.category !== 'all',
+      onClear: clearFilters
+    };
+
+    // product page
+    const cur = s.productId ? byId[s.productId] : null;
+    const pdp = cur ? Object.assign({
+      id: cur.id, name: cur.name, categoryLabel: cur.categoryLabel, tag: cur.tag, blurb: cur.blurb, sku: cur.sku,
+      sizeNoun: cur.sizeNoun, colors: cur.colors, sizes: cur.sizes, policies: cur.policies,
+      variants: cur.variants.map((v) => ({ id: v.id, colorId: v.colorId, sizeId: v.sizeId, priceCents: v.priceCents, priceLabel: money(v.priceCents), inStock: v.inStock })),
+      gallery: cur.gallery.map((g) => mediaVM(g))
+    }) : null;
+    const relatedFor = (p) => s.products.filter((x) => p && x.id !== p.id && x.category === p.category)
+      .concat(s.products.filter((x) => p && x.id !== p.id && x.category !== p.category)).slice(0, 4).map(toCard);
+
+    // cart
+    let subtotal = 0, count = 0;
+    const cartLines = [];
+    s.cart.forEach((l) => {
+      const p = byId[l.productId];
+      if (!p) return;
+      const v = p.variants.find((x) => x.id === l.variantId) || p.variants[0];
+      const color = p.colors.find((c) => c.id === v.colorId);
+      const size = p.sizes.find((z) => z.id === v.sizeId);
+      subtotal += v.priceCents * l.qty; count += l.qty;
+      cartLines.push(Object.assign({
+        lineId: l.lineId, name: p.name, qty: l.qty,
+        variantLabel: 'Color: ' + (color ? color.label : '') + '  |  ' + p.sizeNoun + ': ' + (size ? size.label : ''),
+        unitLabel: money(v.priceCents) + ' each', totalLabel: money(v.priceCents * l.qty),
+        notes: '', hasNotes: false, canDec: l.qty > 1,
+        inc: () => this.commitCart(this.state.cart.map((x) => (x.lineId === l.lineId ? { ...x, qty: Math.min(99, x.qty + 1) } : x)), false),
+        dec: () => this.commitCart(this.state.cart.map((x) => (x.lineId === l.lineId ? { ...x, qty: Math.max(1, x.qty - 1) } : x)), false),
+        remove: () => this.commitCart(this.state.cart.filter((x) => x.lineId !== l.lineId), false),
+        open: () => { this.setState({ cartOpen: false }); openProductQuick(p.id); }
+      }, mediaVM(p.media)));
+    });
+    const lastInCart = s.cart.length ? byId[s.cart[s.cart.length - 1].productId] : null;
+
+    const activeNav = s.view === 'home' ? 'home' : (s.view === 'shop' || s.view === 'product') ? 'shop' : s.view === 'custom' ? 'custom' : '';
+
+    return {
+      theme: s.theme,
+      isFurry: s.theme === 'furry',
+      isHumanHome: s.view === 'home' && s.theme !== 'furry',
+      isFurryHome: s.view === 'home' && s.theme === 'furry',
+      showFurryPrompt: s.view === 'home' && s.theme !== 'furry',
+      furryBusy: s.furryBusy,
+      enterFurry: () => this.enterFurry(),
+      exitFurry: () => this.exitFurry(),
+      isHome: s.view === 'home', isShop: s.view === 'shop', isProduct: s.view === 'product' && !!cur,
+      isCustom: s.view === 'custom', isCart: s.view === 'cart',
+      activeNav, cartCount: count,
+      // navigation
+      goHome, goShopAll: goShop('all'), goCustom: () => go({ view: 'custom' }), goAbout,
+      goCart: () => go({ view: 'cart', cartOpen: false }, { instant: true }),
+      // header search: typing jumps to the shop with the query applied
+      query: s.query,
+      onQuery: (e) => { this.setState({ query: e.target.value, view: 'shop', category: s.view === 'shop' ? s.category : 'all', productId: null }); if (s.view !== 'shop') this.toTop(); },
+      // home
+      tiles, catRows,
+      // shop
+      bannerA: catLabel ? catLabel : 'Shop the', bannerB: catLabel ? '' : 'Collection',
+      listTitle: q ? 'Results' : (catLabel || 'All products'),
+      filterModel, results, layout: s.layout, sort: s.sort,
+      setLayout: (l) => this.setState({ layout: l }),
+      onSort: (e) => this.setState({ sort: e.target.value }),
+      clearFilters,
+      // product
+      pdp, related: relatedFor(cur),
+      pdpAdd: (variantId, qty) => { if (cur) this.addToCart(cur.id, variantId, qty); },
+      pdpBack: cur ? goShop(cur.category) : goShop('all'),
+      // cart
+      cartOpen: s.cartOpen, cartLines, subtotalLabel: money(subtotal),
+      cartRelated: s.cart.length ? relatedFor(lastInCart) : [],
+      closeCart: () => this.setState({ cartOpen: false }),
+      goShopFromCart: () => { this.setState({ cartOpen: false }); goShop('all')(); },
+      viewCartFromDrawer: () => go({ view: 'cart', cartOpen: false }, { instant: true }),
+      // footer + forms
+      footerLinks: [{ label: 'All gear', go: goShop('all') }].concat(cats.map((c) => ({ label: c.label, go: goShop(c.id) }))),
+      onSubscribe: (email) => this.api().subscribe(email),
+      onInquiry: (payload) => this.api().submitInquiry(payload)
+    };
+  }
+}
+</script>
+</body>
+</html>
