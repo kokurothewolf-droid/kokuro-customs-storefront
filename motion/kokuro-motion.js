@@ -55,7 +55,7 @@
     // the native engine only.
     gsap: '',
     scrollTrigger: '',
-    claw: './assets/93eba917cff886a4ae1ea570c6b387ab.svg',
+    claw: 'project/assets/93eba917cff886a4ae1ea570c6b387ab.svg',
     glFile: 'kokuro-gl.js'
   };
 

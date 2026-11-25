@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>Kokuro Customs Storefront</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
 
 <link rel="stylesheet" href="./theme/human.css">
 <link rel="stylesheet" href="./theme/furry.css">
@@ -170,14 +168,14 @@ class Component extends DCLogic {
 
   assets() {
     return {
-      crest: './assets/b9ea5f2df029c70d00aa70ae7c352a23.svg',
-      paw: './assets/ae9a7a1d8a4e5b0a3b08010fe19a46c4.svg',
-      claw: './assets/93eba917cff886a4ae1ea570c6b387ab.svg',
-      mountain: './assets/d164f2ec5d403ddd31a3d107018ea8e3.svg',
-      tee: './assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp',
-      hoodie: './assets/fe2219d4ba1b72dbdabcc0396e5dbed0.webp',
-      cap: './assets/b531ac5cb13dc13829e00eaeca6b7fc6.webp',
-      hero: './assets/6c0b2281e740e00a74a4bc95e137d10f.webp'
+      crest: 'project/assets/b9ea5f2df029c70d00aa70ae7c352a23.svg',
+      paw: 'project/assets/ae9a7a1d8a4e5b0a3b08010fe19a46c4.svg',
+      claw: 'project/assets/93eba917cff886a4ae1ea570c6b387ab.svg',
+      mountain: 'project/assets/d164f2ec5d403ddd31a3d107018ea8e3.svg',
+      tee: 'project/assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp',
+      hoodie: 'project/assets/fe2219d4ba1b72dbdabcc0396e5dbed0.webp',
+      cap: 'project/assets/b531ac5cb13dc13829e00eaeca6b7fc6.webp',
+      hero: 'project/assets/6c0b2281e740e00a74a4bc95e137d10f.webp'
     };
   }
 
@@ -233,29 +231,29 @@ class Component extends DCLogic {
       })));
       return { colors, sizes, variants };
     };
-    const B = (id) => './assets/' + id + '.jpg';
+    const B = (id) => './assets/' + id;
     const IMG = {
-      'baseball-jersey': '60b5bd7810c706ec98bd67403247f20b', 'baseball-jersey-back': '548b7406306ff510c03c7aedfe59be6f',
-      'hockey-jersey': '4dd8300d3303438c5b49e3529413557e', 'basketball-jersey': 'c6cf16d2a7d4707e2f7199e197635342',
-      'football-jersey': '9a5645018a1c3cb35453c911e60f8600', 'unisex-tee': 'e5a13d31a79a415b246e922340987d25',
-      'tank-top': '279e54a7208ce8c61b619b0f5bcbbf1f', 'button-up': '2364ce6c1c41f88ff7c49d8f60170351',
-      'fursona-bar-tee': '27400162851182ff28d2ed393c08e86d', 'fursona-bar-tee-model': 'd0b638c939a1369a6366ba411122497d',
-      'pullover-hoodie': 'f0ba175c459af73e419bef2375d510b4', 'pullover-hoodie-back': 'eb38611a50cc2b3b6529e31cd1524c2c',
-      'zip-hoodie': '85c122ffb166eb522e4489690fc3e8bb', 'letterman-jacket': '24b5036672f16abd89401afc3cf95c1e',
-      'athletic-shorts': 'c458272be338968ba43106a585dfd117', 'joggers': 'e44dc2edf21a51ebddd3d6cd19b6b91e',
-      'track-pants': 'ae7402434be016abf1e7ee3d45e3c982', 'boxers': '2932829807862187e57bc3d64e37ac41',
-      'boxers-back': '94b5d7c9d8b4afee96a22cd518d30404', 'snapback': '843c58dbffa7fff3d7f763fd78be1700',
-      'high-top-shoes': '212aeffc03ef26c899d56bb6199a5840', 'sherpa-blanket': '8ab397c0f00b92aa1ad5fcdf1c57dfca',
-      'tumbler': 'a91b078892e910b25a32e556fa76aa80', 'travel-mug': '86548275c21f6c1ba3d49c3af27135b8',
-      'iphone-case': '83642df052b95a473f0844638723e8e3', 'samsung-case': 'f63b6a2e5e400fe7c6f6606b8960a863',
-      'tote': 'c7a13f405f969563aeb86e554209620e', 'patch': '7fbe1226de4835c2f6626752bdadc0dd',
-      'bandana': 'f15f92244a291fd37be7eb95c04798f4', 'pin-buttons': 'd36e5886b420831a93bfe1edf04f5744',
-      'neck-gaiter': 'dd37c0879dc1d3a31a49a27576f63866', 'pet-collar': '92d998acdc6d2b975aeebdc2ba81236d',
-      'pet-collar-back': '79f7edb86988123cc4f3f12f2d67a27e', 'poster-fur-not-war': '0f83825a5dd7c885725e21338bafb130',
-      'poster-want-you': '48683d451a9b5cf332ae3eb87d143bc8', 'poster-unite': '1e5a4942142277baeb9195ea5dd33221',
-      'poster-we-can': '9303d39a6b3d6b157f8fe2d274994a06', 'poster-future': 'ba66442c0f769a81176c8fe70e3985f9',
-      'poster-wilder': '2658184fff5d2985f995396c8eca188b',
-      'poster-gta-furry-ban': 'c8cac61bad01b770dbbb379ef73092a1'
+      'baseball-jersey': '60b5bd7810c706ec98bd67403247f20b.jpg', 'baseball-jersey-back': '548b7406306ff510c03c7aedfe59be6f.jpg',
+      'hockey-jersey': '4dd8300d3303438c5b49e3529413557e.jpg', 'basketball-jersey': 'c6cf16d2a7d4707e2f7199e197635342.jpg',
+      'football-jersey': '9a5645018a1c3cb35453c911e60f8600.jpg', 'unisex-tee': 'e5a13d31a79a415b246e922340987d25.jpg',
+      'tank-top': '279e54a7208ce8c61b619b0f5bcbbf1f.jpg', 'button-up': '2364ce6c1c41f88ff7c49d8f60170351.jpg',
+      'fursona-bar-tee': '27400162851182ff28d2ed393c08e86d.jpg', 'fursona-bar-tee-model': 'd0b638c939a1369a6366ba411122497d.jpg',
+      'pullover-hoodie': 'f0ba175c459af73e419bef2375d510b4.jpg', 'pullover-hoodie-back': 'eb38611a50cc2b3b6529e31cd1524c2c.jpg',
+      'zip-hoodie': '85c122ffb166eb522e4489690fc3e8bb.jpg', 'letterman-jacket': '24b5036672f16abd89401afc3cf95c1e.jpg',
+      'athletic-shorts': 'c458272be338968ba43106a585dfd117.jpg', 'joggers': 'e44dc2edf21a51ebddd3d6cd19b6b91e.jpg',
+      'track-pants': 'ae7402434be016abf1e7ee3d45e3c982.jpg', 'boxers': '2932829807862187e57bc3d64e37ac41.jpg',
+      'boxers-back': '94b5d7c9d8b4afee96a22cd518d30404.jpg', 'snapback': '843c58dbffa7fff3d7f763fd78be1700.jpg',
+      'high-top-shoes': '212aeffc03ef26c899d56bb6199a5840.jpg', 'sherpa-blanket': '8ab397c0f00b92aa1ad5fcdf1c57dfca.jpg',
+      'tumbler': 'a91b078892e910b25a32e556fa76aa80.jpg', 'travel-mug': '86548275c21f6c1ba3d49c3af27135b8.jpg',
+      'iphone-case': '83642df052b95a473f0844638723e8e3.jpg', 'samsung-case': 'f63b6a2e5e400fe7c6f6606b8960a863.jpg',
+      'tote': 'c7a13f405f969563aeb86e554209620e.jpg', 'patch': '7fbe1226de4835c2f6626752bdadc0dd.jpg',
+      'bandana': 'f15f92244a291fd37be7eb95c04798f4.jpg', 'pin-buttons': 'd36e5886b420831a93bfe1edf04f5744.jpg',
+      'neck-gaiter': 'dd37c0879dc1d3a31a49a27576f63866.jpg', 'pet-collar': '92d998acdc6d2b975aeebdc2ba81236d.jpg',
+      'pet-collar-back': '79f7edb86988123cc4f3f12f2d67a27e.jpg', 'poster-fur-not-war': '0f83825a5dd7c885725e21338bafb130.jpg',
+      'poster-want-you': '48683d451a9b5cf332ae3eb87d143bc8.jpg', 'poster-unite': '1e5a4942142277baeb9195ea5dd33221.jpg',
+      'poster-we-can': '9303d39a6b3d6b157f8fe2d274994a06.jpg', 'poster-future': 'ba66442c0f769a81176c8fe70e3985f9.jpg',
+      'poster-wilder': '2658184fff5d2985f995396c8eca188b.jpg',
+      'poster-gta-furry-ban': 'c8cac61bad01b770dbbb379ef73092a1.jpg'
     };
     const ph = (key, pos) => ({ kind: 'photo', src: B(IMG[key]), pos: pos || '50% 50%', zoom: 1 });
     const APP = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
@@ -290,36 +288,36 @@ class Component extends DCLogic {
     };
     const PHOTOS = {
       'pawtagonia-tee': {
-        black: ['1015e8b8eb135fd1f62bc41281f97f9b', 'a33dfcbde6505fa1395efda1f08bf4b6', 'e36a2540f6c4c2475522264186198cd4', '0f1db99cbd3c7145e1a3234cb3a8b922'],
-        navy: ['e100bb69e20bdabdda3df2dbf2c7a4ad', '4022741e66933cd91386519db285bde0', '078ffb7c8157de58c562b9bcde77dc5c', '35ff29c06e06d383f57d07a85c63f7ce'],
-        royal: ['61c26e55ff8238390a3fe041ddb097b9', '11670fa1574043804ba963e994e98407', 'f03006ff29aa6f578374a63bbd42dc5c', '4588f774e577c5d2bb8d74e53ab95a5c'],
-        grey: ['d1a6446721f112d611fd8123f61d1c0d', '955a7214e7bb3fe5f06eb03761c2f65c', 'a0ef3f6bf1135b8dd2f2f9dfe9da7882', '3de7ba4d830820e51d67a11db5423678'],
-        white: ['204f25045fbbb960cead491e5884eebc', '8364ef17e679594804122bbd310d6d37', '63de62723e2a4d7ced7d11c885f2dd34', '9e52960198dcbffbcbc1d109886d2365'],
-        natural: ['5444d5eae8ed44c523759dabe5ad37d8', '8af8d8ec6d0ab91841467af48e3f3e3a', 'aa4dbea9db37d94bcd411ee861bc4e76', 'c3731c619da7f697e92f47c800100c3f'],
-        cream: ['2556871da920d2bb33c1ccdfc2420d26', '78ae0424f88e85016fde410c659f99c6', 'e05eb684a26d179e0a09bc4e6d153f14', '881e9bcfa92ddd8534eae2565cf4c220'],
-        'graphite-black': ['17a3901b3e010f633e003e1d90c28e86', 'b5c5a32bc9217b0aeb49d4d1472f42c7', '7067def73750ba1b28d07b04ca3b5075', '9353f666ce2c1f6fb8f292046b85c317'],
-        'heavy-metal': ['b062ab147b7c75c246c463958a8e815a', 'dd43f2b4b2ef721f82d5e4507ae15c58', '5c87b64a23a46f8621fdb12636753ea0', 'dcf7747ca7595edc094f79e8c7e8c7cf'],
-        'cool-blue': ['bc8e7ece6a0aeb950488f4b3372bb8f8', '8c70963b8dd2cd3adf2ad2455d9ecc31', '3e82a2d561363c7709440ba23e4b6be8', 'a4cbea78744d5afd9582260ec09c9257'],
-        'light-blue': ['02c66deaff6e49cb86317c5a4580aa31', '66175a6f848e25371a132512b79c19bc', '72ccf72728b10095c4d5f4ecbdb43e3d', 'f5e42b56cc0ce4988deb659d140f2f99'],
-        'forest-green': ['bbd7dc7c4edac4f1a620dd6a3e5e3134', '10843cb18dd481fe2d97bbed0dfc29ff', '086457ccd4bf870539059f2747ef0b03', '70d1f10e6219cb99632e740ba062d8d6'],
-        red: ['1be662b30a49140e1de141683ba93d03', 'b74b56c41b01358eb4df8de6d803f9f2', '9a9fd9bbe296c2210a147fc8642305d5', 'cb8ae5dd452d80b680eefebf2b31cd3b'],
-        'desert-pink': ['f889162dcc9634ddeadc7c44684b64d7', '8df0c96f4a7413d04a1e42164282d25f', 'fd1aaaf077821b00ee30029e9d705f87', 'd04cc195cb1a0a83fd62e01d4b20168c']
+        black: ['1015e8b8eb135fd1f62bc41281f97f9b.jpg', 'a33dfcbde6505fa1395efda1f08bf4b6.jpg', 'e36a2540f6c4c2475522264186198cd4.jpg', '0f1db99cbd3c7145e1a3234cb3a8b922.jpg'],
+        navy: ['e100bb69e20bdabdda3df2dbf2c7a4ad.jpg', '4022741e66933cd91386519db285bde0.jpg', '078ffb7c8157de58c562b9bcde77dc5c.jpg', '35ff29c06e06d383f57d07a85c63f7ce.jpg'],
+        royal: ['61c26e55ff8238390a3fe041ddb097b9.jpg', '11670fa1574043804ba963e994e98407.jpg', 'f03006ff29aa6f578374a63bbd42dc5c.jpg', '4588f774e577c5d2bb8d74e53ab95a5c.jpg'],
+        grey: ['d1a6446721f112d611fd8123f61d1c0d.jpg', '955a7214e7bb3fe5f06eb03761c2f65c.jpg', 'a0ef3f6bf1135b8dd2f2f9dfe9da7882.jpg', '3de7ba4d830820e51d67a11db5423678.jpg'],
+        white: ['204f25045fbbb960cead491e5884eebc.jpg', '8364ef17e679594804122bbd310d6d37.jpg', '63de62723e2a4d7ced7d11c885f2dd34.jpg', '9e52960198dcbffbcbc1d109886d2365.jpg'],
+        natural: ['5444d5eae8ed44c523759dabe5ad37d8.jpg', '8af8d8ec6d0ab91841467af48e3f3e3a.jpg', 'aa4dbea9db37d94bcd411ee861bc4e76.jpg', 'c3731c619da7f697e92f47c800100c3f.jpg'],
+        cream: ['2556871da920d2bb33c1ccdfc2420d26.jpg', '78ae0424f88e85016fde410c659f99c6.jpg', 'e05eb684a26d179e0a09bc4e6d153f14.jpg', '881e9bcfa92ddd8534eae2565cf4c220.jpg'],
+        'graphite-black': ['17a3901b3e010f633e003e1d90c28e86.jpg', 'b5c5a32bc9217b0aeb49d4d1472f42c7.jpg', '7067def73750ba1b28d07b04ca3b5075.jpg', '9353f666ce2c1f6fb8f292046b85c317.jpg'],
+        'heavy-metal': ['b062ab147b7c75c246c463958a8e815a.jpg', 'dd43f2b4b2ef721f82d5e4507ae15c58.jpg', '5c87b64a23a46f8621fdb12636753ea0.jpg', 'dcf7747ca7595edc094f79e8c7e8c7cf.jpg'],
+        'cool-blue': ['bc8e7ece6a0aeb950488f4b3372bb8f8.jpg', '8c70963b8dd2cd3adf2ad2455d9ecc31.jpg', '3e82a2d561363c7709440ba23e4b6be8.jpg', 'a4cbea78744d5afd9582260ec09c9257.jpg'],
+        'light-blue': ['02c66deaff6e49cb86317c5a4580aa31.jpg', '66175a6f848e25371a132512b79c19bc.jpg', '72ccf72728b10095c4d5f4ecbdb43e3d.jpg', 'f5e42b56cc0ce4988deb659d140f2f99.jpg'],
+        'forest-green': ['bbd7dc7c4edac4f1a620dd6a3e5e3134.jpg', '10843cb18dd481fe2d97bbed0dfc29ff.jpg', '086457ccd4bf870539059f2747ef0b03.jpg', '70d1f10e6219cb99632e740ba062d8d6.jpg'],
+        red: ['1be662b30a49140e1de141683ba93d03.jpg', 'b74b56c41b01358eb4df8de6d803f9f2.jpg', '9a9fd9bbe296c2210a147fc8642305d5.jpg', 'cb8ae5dd452d80b680eefebf2b31cd3b.jpg'],
+        'desert-pink': ['f889162dcc9634ddeadc7c44684b64d7.jpg', '8df0c96f4a7413d04a1e42164282d25f.jpg', 'fd1aaaf077821b00ee30029e9d705f87.jpg', 'd04cc195cb1a0a83fd62e01d4b20168c.jpg']
       }
     };
     // Furrberry: 4 colors x 6 photos [flat front, model front, model left-front, model right-front, model back, flat back]
     PHOTOS['furrberry-tee'] = {
-      black: ['3354a720e4bafc6faef6840d95524bfd', '10ead207c5faec18b2c7f8827bc00943', 'f9859bd6f437f16cd425e035ebf9e9f8', 'd59ac438cb90e43aa727c5c58f38287b', 'a5147377fdad1e23c254894c93b2c644', '2583665737c3ccc47aeac988e64078dc'],
-      'cool-blue': ['365fe1a892093f1df50d40380eeccaf4', '70f1d46e253403d9e9adbb5ef0a3f36c', '489d7bd62ad915f7f64ceb8d1a7612a4', '6e13211591b7def632669bf3723e3442', '836acb44a67beb44aad5811991923c04', '433c7c10f338d8c20ca904eb51cf0de0'],
-      'graphite-black': ['fc34e638e9cb232999ee9ae217fac94a', 'cd007890a0e0206da24e1c2a63588c48', '353b45fa0f31450a2881bccb1f5cce64', 'c814f59aa7be141304f9284f59aa88d3', 'bc358340eb34e057e5a7b2b67a2ff69d', '9dc58a26494c48e15a3a56fa0560d4d9'],
-      navy: ['f76753ce85470496835cef342b3b2201', '914064535d25cf7649b4554c09744cce', 'c06ebd7090027c6569119144fbbd1ba3', '71ec36535db17853e2fa386c6e3aa829', '9ff4292690246cc229c36fd5ad330d47', 'cacbf461d3fe7fac0dc9ac5d7bd20b64']
+      black: ['3354a720e4bafc6faef6840d95524bfd.jpg', '10ead207c5faec18b2c7f8827bc00943.jpg', 'f9859bd6f437f16cd425e035ebf9e9f8.jpg', 'd59ac438cb90e43aa727c5c58f38287b.jpg', 'a5147377fdad1e23c254894c93b2c644.jpg', '2583665737c3ccc47aeac988e64078dc.jpg'],
+      'cool-blue': ['365fe1a892093f1df50d40380eeccaf4.jpg', '70f1d46e253403d9e9adbb5ef0a3f36c.jpg', '489d7bd62ad915f7f64ceb8d1a7612a4.jpg', '6e13211591b7def632669bf3723e3442.jpg', '836acb44a67beb44aad5811991923c04.jpg', '433c7c10f338d8c20ca904eb51cf0de0.jpg'],
+      'graphite-black': ['fc34e638e9cb232999ee9ae217fac94a.jpg', 'cd007890a0e0206da24e1c2a63588c48.jpg', '353b45fa0f31450a2881bccb1f5cce64.jpg', 'c814f59aa7be141304f9284f59aa88d3.jpg', 'bc358340eb34e057e5a7b2b67a2ff69d.jpg', '9dc58a26494c48e15a3a56fa0560d4d9.jpg'],
+      navy: ['f76753ce85470496835cef342b3b2201.jpg', '914064535d25cf7649b4554c09744cce.jpg', 'c06ebd7090027c6569119144fbbd1ba3.jpg', '71ec36535db17853e2fa386c6e3aa829.jpg', '9ff4292690246cc229c36fd5ad330d47.jpg', 'cacbf461d3fe7fac0dc9ac5d7bd20b64.jpg']
     };
     PHOTOS['zerofox-tee'] = {
-      black: ['91ac835926c21798acef19baf02e6611', '409960a9cf41ef47c1e2ebd1e90b08a8', '2555c43319ec7930d7c9a1c48fe0d423', '31a4e2da1fdb6e3349af39f7c0927be3', '389d071387d5558db4df83988e7faeb5', '690ead90d0553494c8447c3c523eeff9'],
-      navy: ['bba50c51d50503e15aafca20114946c1', 'c9db1f996ef7dc6ebfdd6bf525015f07', 'ac2dc722c222a40ceca1a6ff6170a87b', '9559e24d53a31a5d150097589e5a9b30', '5c8b81ae20c9fb7856244247d0277066', '3483f3527d0439035813f7b34d7dcb43']
+      black: ['91ac835926c21798acef19baf02e6611.jpg', '409960a9cf41ef47c1e2ebd1e90b08a8.jpg', '2555c43319ec7930d7c9a1c48fe0d423.jpg', '31a4e2da1fdb6e3349af39f7c0927be3.jpg', '389d071387d5558db4df83988e7faeb5.jpg', '690ead90d0553494c8447c3c523eeff9.jpg'],
+      navy: ['bba50c51d50503e15aafca20114946c1.jpg', 'c9db1f996ef7dc6ebfdd6bf525015f07.jpg', 'ac2dc722c222a40ceca1a6ff6170a87b.jpg', '9559e24d53a31a5d150097589e5a9b30.jpg', '5c8b81ae20c9fb7856244247d0277066.jpg', '3483f3527d0439035813f7b34d7dcb43.jpg']
     };
     PHOTOS['zerofox-90s-tee'] = {
-      black: ['1caa7976c0f6680d908d57eb67ed2398', 'b5face0243bc343b62fdd2f6b4905a0b', '516d9ca89863f9001028cd4af27fc5d4', '4641c5f4077f256f579f69f48063a8da', 'eec9628609eb964c302f67e04bddac15', '9603928de3a9a7f5787126eb821ea251'],
-      navy: ['a256b01bca5f5651bf75d79e1539a2aa', '969e73abc7e2f0be5993e964f05a78b9', 'bf1ebb630442ef87375ad7b41fad8c0d', 'b1530db239b70ecf90f165c4e11e62d7', 'a9fcdc46f903aa8008959ef615c1a24c', 'f7e3b68712fe2791090a2662381dca02']
+      black: ['1caa7976c0f6680d908d57eb67ed2398.jpg', 'b5face0243bc343b62fdd2f6b4905a0b.jpg', '516d9ca89863f9001028cd4af27fc5d4.jpg', '4641c5f4077f256f579f69f48063a8da.jpg', 'eec9628609eb964c302f67e04bddac15.jpg', '9603928de3a9a7f5787126eb821ea251.jpg'],
+      navy: ['a256b01bca5f5651bf75d79e1539a2aa.jpg', '969e73abc7e2f0be5993e964f05a78b9.jpg', 'bf1ebb630442ef87375ad7b41fad8c0d.jpg', 'b1530db239b70ecf90f165c4e11e62d7.jpg', 'a9fcdc46f903aa8008959ef615c1a24c.jpg', 'f7e3b68712fe2791090a2662381dca02.jpg']
     };
     const FIT = (id, sku, name, extra, colorList) => {
       const byColor = {};

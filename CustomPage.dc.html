@@ -3,9 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Kokuro Custom Prints Page</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
+<script src="./support.js"></script>
 <link rel="stylesheet" href="./theme/human.css">
 </head>
 <body>
@@ -77,9 +75,9 @@ body{margin:0}
 </helmet>
 <div class="cp k-root" style="min-height: 0">
 <section class="cp-hero" aria-labelledby="cp-h1">
-<img class="bg" data-k-parallax="0.1" data-k-parallax-cover src="./assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="" width="1672" height="941">
+<img class="bg" data-k-parallax="0.1" data-k-parallax-cover src="project/assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="" width="1672" height="941">
 <div class="cp-scrim"></div>
-<img class="cp-claw" data-k-parallax="-0.25" data-k-reveal="slash" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
+<img class="cp-claw" data-k-parallax="-0.25" data-k-reveal="slash" src="project/assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
 <div class="cp-in">
 <p class="cp-kanji" data-k-reveal="fade" data-k-delay="0.3" lang="ja" aria-hidden="true">黒狼</p>
 <div>
@@ -104,7 +102,7 @@ body{margin:0}
 
 <div class="k-wrap cp-lower">
 <section aria-labelledby="cp-ex-h">
-<h2 id="cp-ex-h" class="k-display cp-ex-h" data-k-reveal="rise">Custom print examples <img src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></h2>
+<h2 id="cp-ex-h" class="k-display cp-ex-h" data-k-reveal="rise">Custom print examples <img src="project/assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></h2>
 <div class="cp-ex">
 <sc-for list="{{ examples }}" as="e" hint-placeholder-count="3">
 <figure><div class="fr"><div class="k-art" data-k-reveal="slash" role="img" aria-label="{{ e.label }} mockup"><img src="{{ e.artUrl }}" alt=""></div><i>Mockup</i></div><figcaption data-k-reveal="rise">{{ e.label }}</figcaption></figure>
@@ -145,14 +143,14 @@ class Component extends DCLogic {
     };
   }
   renderVals() {
-    const A = { mountain: './assets/d164f2ec5d403ddd31a3d107018ea8e3.svg', crest: './assets/b9ea5f2df029c70d00aa70ae7c352a23.svg', paw: './assets/ae9a7a1d8a4e5b0a3b08010fe19a46c4.svg' };
+    const A = { mountain: 'project/assets/d164f2ec5d403ddd31a3d107018ea8e3.svg', crest: 'project/assets/b9ea5f2df029c70d00aa70ae7c352a23.svg', paw: 'project/assets/ae9a7a1d8a4e5b0a3b08010fe19a46c4.svg' };
     const c = this.content();
     return {
       steps: c.steps, features: c.features,
       examples: [
-        { label: 'Baseball jersey', artUrl: './assets/60b5bd7810c706ec98bd67403247f20b.jpg' },
-        { label: 'Pullover hoodie', artUrl: './assets/f0ba175c459af73e419bef2375d510b4.jpg' },
-        { label: 'High-top canvas shoes', artUrl: './assets/212aeffc03ef26c899d56bb6199a5840.jpg' }
+        { label: 'Baseball jersey', artUrl: 'project/assets/60b5bd7810c706ec98bd67403247f20b.jpg' },
+        { label: 'Pullover hoodie', artUrl: 'project/assets/f0ba175c459af73e419bef2375d510b4.jpg' },
+        { label: 'High-top canvas shoes', artUrl: 'project/assets/212aeffc03ef26c899d56bb6199a5840.jpg' }
       ],
       productTypes: ['Jersey', 'Tee or tank', 'Hoodie or jacket', 'Bottoms', 'Boxer briefs', 'High-top shoes', 'Snapback cap', 'Phone case, tote, patch or pins', 'Tumbler or travel mug', 'Sherpa blanket', 'Pet collar', 'Something else'],
       slip: this.props.slip || { has: false, lines: [], depositLabel: '$0.00', text: '' },

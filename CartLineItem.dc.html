@@ -3,9 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Kokuro Cart Line Item</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
+<script src="./support.js"></script>
 <link rel="stylesheet" href="./theme/human.css">
 </head>
 <body>
@@ -60,7 +58,7 @@ body{margin:0}
 <div>
 <h3 class="kl-name"><button onClick="{{ open }}">{{ name }}</button></h3>
 <p class="kl-meta">{{ variantLabel }}</p>
-<img class="kl-mark" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
+<img class="kl-mark" src="project/assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
 </div>
 </div>
 <div class="kl-price">{{ unitPrice }}</div>
@@ -81,7 +79,7 @@ class Component extends DCLogic {
     const noop = () => {};
     const l = this.props.line || {
       name: 'Lone Wolf Tee', variantLabel: 'Color: Black  |  Size: L', unitLabel: '$28.00', totalLabel: '$28.00', qty: 1,
-      hasPhoto: true, image: './assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', artUrl: '', canDec: false
+      hasPhoto: true, image: 'project/assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', artUrl: '', canDec: false
     };
     return {
       name: l.name, variantLabel: l.variantLabel,

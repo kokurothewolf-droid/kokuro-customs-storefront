@@ -3,9 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Kokuro Page Banner</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
+<script src="./support.js"></script>
 <link rel="stylesheet" href="./theme/human.css">
 </head>
 <body>
@@ -29,14 +27,14 @@ body{margin:0}
 </style>
 </helmet>
 <section class="kb">
-<sc-if value="{{ isMountain }}" hint-placeholder-val="{{ false }}"><img class="kb-art" data-k-parallax="0.12" data-k-reveal="fade" src="./assets/d164f2ec5d403ddd31a3d107018ea8e3.svg" alt=""></sc-if>
-<sc-if value="{{ isClaw }}" hint-placeholder-val="{{ true }}"><img class="kb-claw" data-k-parallax="-0.22" data-k-reveal="slash" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></sc-if>
+<sc-if value="{{ isMountain }}" hint-placeholder-val="{{ false }}"><img class="kb-art" data-k-parallax="0.12" data-k-reveal="fade" src="project/assets/d164f2ec5d403ddd31a3d107018ea8e3.svg" alt=""></sc-if>
+<sc-if value="{{ isClaw }}" hint-placeholder-val="{{ true }}"><img class="kb-claw" data-k-parallax="-0.22" data-k-reveal="slash" src="project/assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></sc-if>
 <div class="k-wrap kb-in">
 <sc-if value="{{ hasKanji }}" hint-placeholder-val="{{ false }}"><p class="kb-kanji" lang="ja" aria-hidden="true">黒狼</p></sc-if>
 <div>
 <h1 class="k-display kb-h1"><span class="k-mask"><span style="display: block" data-k-reveal="line">{{ titleA }} <span class="k-red">{{ titleB }}</span></span></span></h1>
-<img class="kb-swoosh" data-k-reveal="draw" data-k-delay="0.3" src="./assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
-<p class="kb-sub" data-k-reveal="rise" data-k-delay="0.35"><img src="./assets/c463ac4d9b2b4802b28a81ce86960c45.svg" alt="">{{ subtitle }}</p>
+<img class="kb-swoosh" data-k-reveal="draw" data-k-delay="0.3" src="project/assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
+<p class="kb-sub" data-k-reveal="rise" data-k-delay="0.35"><img src="project/assets/c463ac4d9b2b4802b28a81ce86960c45.svg" alt="">{{ subtitle }}</p>
 </div>
 </div>
 </section>
