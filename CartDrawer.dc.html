@@ -25,7 +25,7 @@ body{margin:0}
 .kcw-line{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:18px 0;border-bottom:1px solid #2A2A2A}
 .kcw-thumb{position:relative;width:84px;height:104px;padding:0;border:0;background:#1A1A1A;overflow:hidden;cursor:pointer;clip-path:polygon(12% 0,100% 0,88% 100%,0 100%)}
 .kcw-thumb img{display:block;width:100%;height:100%;object-fit:cover}
-.kcw-thumb .kcw-art{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background-color:#101010;background-image:url(project/assets/fc35f148840560cbd9f2bc097d49f2f2.svg);background-size:300px 200px}
+.kcw-thumb .kcw-art{display:flex;align-items:center;justify-content:center;width:100%;height:100%;background-color:#101010;background-image:url(./assets/fc35f148840560cbd9f2bc097d49f2f2.svg);background-size:300px 200px}
 .kcw-thumb .kcw-art img{width:60%;height:60%;object-fit:contain}
 .kcw-name{margin:0;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-style:italic;font-size:26px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .kcw-name button{padding:0;border:0;background:none;font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -109,8 +109,8 @@ class Component extends DCLogic {
     const p = this.props;
     const standalone = p.lines === undefined;
     const lines = (p.lines || (standalone ? [
-      { lineId: 'a', name: 'Lone Wolf Tee', variantLabel: 'M', unitLabel: '$28.00 each', totalLabel: '$56.00', qty: 2, hasPhoto: true, noPhoto: false, image: 'project/assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', artUrl: '', notes: '', hasNotes: false, canDec: true, inc: () => {}, dec: () => {}, remove: () => {}, open: () => {} },
-      { lineId: 'b', name: 'Claw Slash Decal', variantLabel: 'Single decal', unitLabel: '$8.00 each', totalLabel: '$8.00', qty: 1, hasPhoto: false, noPhoto: true, image: '', imagePos: '', artUrl: 'project/assets/93eba917cff886a4ae1ea570c6b387ab.svg', notes: '', hasNotes: false, canDec: false, inc: () => {}, dec: () => {}, remove: () => {}, open: () => {} }
+      { lineId: 'a', name: 'Lone Wolf Tee', variantLabel: 'M', unitLabel: '$28.00 each', totalLabel: '$56.00', qty: 2, hasPhoto: true, noPhoto: false, image: './assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', artUrl: '', notes: '', hasNotes: false, canDec: true, inc: () => {}, dec: () => {}, remove: () => {}, open: () => {} },
+      { lineId: 'b', name: 'Claw Slash Decal', variantLabel: 'Single decal', unitLabel: '$8.00 each', totalLabel: '$8.00', qty: 1, hasPhoto: false, noPhoto: true, image: '', imagePos: '', artUrl: './assets/93eba917cff886a4ae1ea570c6b387ab.svg', notes: '', hasNotes: false, canDec: false, inc: () => {}, dec: () => {}, remove: () => {}, open: () => {} }
     ] : [])).map((l) => ({ ...l, noPhoto: !l.hasPhoto, decDisabled: !l.canDec }));
     return {
       isOpen: p.open === undefined ? true : !!p.open,

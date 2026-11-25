@@ -112,7 +112,7 @@ body{margin:0}
 <sc-if value="{{ hasTag }}" hint-placeholder-val="{{ false }}"><span class="k-tag" style="margin-bottom: 12px">{{ tag }}</span></sc-if>
 <p class="k-eyebrow" style="color: var(--k-ink-dim)">Kokuro Customs</p>
 <h1 class="k-display kd-h1"><span class="k-mask"><span style="display: block" data-k-reveal="line">{{ name }}</span></span></h1>
-<img class="kd-brush" data-k-reveal="draw" data-k-delay="0.25" src="project/assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
+<img class="kd-brush" data-k-reveal="draw" data-k-delay="0.25" src="./assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
 <p class="kd-price" data-k-reveal="rise" data-k-delay="0.15">{{ priceLabel }}</p>
 <p class="kd-blurb" data-k-reveal="rise" data-k-delay="0.2">{{ blurb }}</p>
 
@@ -202,7 +202,7 @@ class Component extends DCLogic {
       id: 'demo', name: 'Lone Wolf Tee', categoryLabel: 'T-Shirts', tag: 'New', hasTag: true, sku: 'KC-TEE-001',
       blurb: 'A howling wolf, a pale moon and red leaves, printed on a black tee. Made to order.',
       sizeNoun: 'Size', colors, sizes, variants,
-      gallery: [{ hasPhoto: true, image: 'project/assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', zoom: 1, artUrl: '' }],
+      gallery: [{ hasPhoto: true, image: './assets/f8ffea6161a75f8f8fa77b8ccf954b74.webp', imagePos: '50% 40%', zoom: 1, artUrl: '' }],
       policies: { shipping: 'Standard 5-8 business days', returns: '30-day returns, unworn and unwashed', quality: 'Premium print and materials built to last' }
     };
   }
