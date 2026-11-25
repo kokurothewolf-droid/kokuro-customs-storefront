@@ -49,6 +49,21 @@ Tokens (`--k-m-*` in `theme/human.css`) hold duration, stagger, rise distance an
 - **Three.js / React Three Fiber:** not used. R3F needs a React runtime (this storefront is not React) and Three costs about 150 KB gzipped for what is currently one 2D shader. Revisit only if a real 3D asset (wolf crest model, cloth) is commissioned. Raw WebGL covers the current need.
 - **HyperFrames (HeyGen, open source):** renders HTML plus seekable GSAP timelines to deterministic MP4 through headless Chrome. It is an offline authoring tool, not a runtime dependency. Recommended use: render the Human to Furry transition and hero loops to MP4/WebM posters for social, ads and a video fallback on low-power devices. The loader already creates `window.__timelines` when GSAP loads, which is where HyperFrames expects timelines to register. Source: https://hyperframes.heygen.com/
 
+## Scroll acts (Human home page)
+
+`motion/scroll-acts.js` is a small vanilla kit (scroll-craft) that publishes scroll progress as CSS variables so the home page can pin, cue and pan in plain CSS. It finds `[data-act]` live, so it needs no wiring when pages mount or unmount.
+
+- `data-act="pin|pan|flow"` sets `--p` (0 to 1) on the section. Pin and pan sections are `--span` viewport-heights tall and hold a sticky `.st` stage. A pan section also translates its `[data-rail]` sideways.
+- `data-cue="0.3 9"` sets `--c` (0 to 1) on an element: fade and rise in at 0.3, stay.
+- `html.sc-on` is added only when the kit runs. Without it, and under reduced motion, every act uses its static layout: no pinned scroll space, all content visible.
+- Pointer depth (`--mx`, `--my`) is fine-pointer only.
+
+Home page journey: layered hero, silence ("Nothing here is stock"), the range (the peak, a lateral rail of 10 real pieces), the category index, how a commission works (cream ground, a slash that draws itself), the about line, and a closing label.
+
+Signature move, the commission slip: tag pieces on the rail and a slip tallies the $25 per-piece deposits. The closing label prints the same list, and "Start a commission" carries it to the inquiry form (`localStorage['kokuro.slip.v1']`, appended to the inquiry notes).
+
+`theme/human.css` now uses `overflow-x: clip` on `.k-root`; `hidden` made it a scroll container and broke sticky stages.
+
 ## Human Mode to Furry Mode: the Matrix intro
 
 Flow: Human Mode home -> secret button (`FurryPrompt`) -> full-screen Matrix intro -> Furry Mode home. Furry -> Human uses the short claw `page` transition and never replays the intro.

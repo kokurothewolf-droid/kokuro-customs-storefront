@@ -12,12 +12,29 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@900&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .sp{color:var(--k-ink);font-family:var(--k-font-body)}
 .sp-body{display:grid;grid-template-columns:272px minmax(0,1fr);gap:0 40px;padding-top:36px;padding-bottom:72px;align-items:start}
-.sp-side{padding-right:32px;border-right:1px solid var(--k-line-strong)}
+.sp-side{align-self:start;min-width:0;width:100%;padding-right:28px;border-right:1px solid var(--k-line-strong)}
+.sp-body section{min-width:0}
+.kfl{display:block;width:100%;min-width:0;box-sizing:border-box}
+.kfl *{box-sizing:border-box}
+.kfl-h{margin:0 0 14px;font-family:var(--k-font-display);font-style:italic;font-weight:400;font-size:32px;line-height:1;letter-spacing:.03em;text-transform:uppercase}
+.kfl-cats{display:flex;flex-direction:column;gap:0;margin:0 0 22px;padding:0 0 22px;list-style:none;border-bottom:1px solid var(--k-line-strong)}
+.kfl-cats li{margin:0;padding:0}
+.kfl-cat{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:40px;padding:0 12px;cursor:pointer;background:none;border:0;text-align:left;font-size:15px;font-weight:600;color:var(--k-ink-soft);transition:background .2s,color .2s}
+.kfl-cat:hover{background:var(--k-surface);color:var(--k-ink)}
+.kfl-cat[aria-current="true"]{background:var(--k-accent);color:var(--k-on-accent);clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.kfl-cat span:last-child{font-size:13px;font-weight:700;opacity:.85}
+.kfl-sec{border-bottom:1px solid var(--k-line-strong);padding:4px 0 18px;margin-bottom:12px}
+.kfl-sec summary{display:flex;align-items:center;justify-content:space-between;min-height:46px;font-size:14px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.kfl-range{width:100%;height:44px;margin:4px 0 0;background:transparent;accent-color:var(--k-accent)}
+.kfl-ends{display:flex;justify-content:space-between;font-size:14px;font-weight:700}
+.kfl-sw{display:flex;flex-wrap:wrap;gap:2px}
+.kfl-sz{display:flex;flex-wrap:wrap;gap:8px}
+.kfl-clear{margin-top:6px;min-height:44px;padding:0;background:none;border:0;font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--k-accent-text);text-decoration:underline;text-underline-offset:5px}
 .sp-bar{display:flex;align-items:center;gap:14px 18px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--k-line-strong)}
 .sp-title{margin:0;margin-right:auto;font-size:34px;line-height:1}
 .sp-title span{color:var(--k-ink-dim)}
@@ -46,10 +63,41 @@ body{margin:0}
 </style>
 </helmet>
 <div class="sp k-root" style="min-height: 0">
-<dc-import name="PageBanner" title-a="{{ bannerA }}" title-b="{{ bannerB }}" subtitle="Apparel, accessories &amp; custom gear" art="mountain" hint-size="100%,300px"></dc-import>
+<dc-import name="PageBanner" title-a="{{ bannerA }}" title-b="{{ bannerB }}" subtitle="Apparel, accessories & custom gear" art="mountain" hint-size="100%,300px"></dc-import>
 <div class="k-wrap sp-body">
 <aside class="sp-side {{ sideCls }}" data-k-reveal="fade" aria-label="Filters">
-<dc-import name="FilterPanel" model="{{ filterModel }}" hint-size="100%,700px"></dc-import>
+<div class="kfl">
+<h2 class="kfl-h">Categories</h2>
+<ul class="kfl-cats">
+<sc-for list="{{ fCats }}" as="c" hint-placeholder-count="6">
+<li><button class="kfl-cat" aria-current="{{ c.current }}" onClick="{{ c.select }}"><span>{{ c.label }}</span><span>{{ c.countLabel }}</span></button></li>
+</sc-for>
+</ul>
+<h2 class="kfl-h">Filters</h2>
+<details class="kfl-sec" open>
+<summary>Price</summary>
+<label class="k-sr" for="kfl-price">Maximum price</label>
+<input id="kfl-price" class="kfl-range" type="range" min="{{ priceMin }}" max="{{ priceMax }}" step="1" value="{{ priceValue }}" onChange="{{ onPrice }}">
+<div class="kfl-ends"><span>{{ priceMinLabel }}</span><span>Up to {{ priceValueLabel }}</span></div>
+</details>
+<details class="kfl-sec" open>
+<summary>Color</summary>
+<div class="kfl-sw" role="group" aria-label="Color">
+<sc-for list="{{ fColors }}" as="c" hint-placeholder-count="4">
+<button class="k-swatch" aria-pressed="{{ c.pressed }}" aria-label="{{ c.label }}" title="{{ c.label }}" onClick="{{ c.select }}"><i style="background: {{ c.hex }}"></i></button>
+</sc-for>
+</div>
+</details>
+<details class="kfl-sec" open>
+<summary>Size</summary>
+<div class="kfl-sz" role="group" aria-label="Size">
+<sc-for list="{{ fSizes }}" as="s" hint-placeholder-count="6">
+<button class="k-chip k-chip--sm" aria-pressed="{{ s.pressed }}" onClick="{{ s.select }}"><span>{{ s.label }}</span></button>
+</sc-for>
+</div>
+</details>
+<sc-if value="{{ fActive }}" hint-placeholder-val="{{ false }}"><button class="kfl-clear" onClick="{{ fClear }}">Clear filters</button></sc-if>
+</div>
 </aside>
 <section aria-labelledby="sp-title">
 <div class="sp-bar" data-k-reveal="rise">
@@ -64,8 +112,8 @@ body{margin:0}
 </select>
 </label>
 <div class="sp-view" role="group" aria-label="Layout">
-<button aria-pressed="{{ isGrid }}" aria-label="Grid view" onClick="{{ setGrid }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></button>
-<button aria-pressed="{{ isList }}" aria-label="List view" onClick="{{ setList }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h2M10 6h10M4 12h2M10 12h10M4 18h2M10 18h10"></path></svg></button>
+<button aria-pressed="{{ isGrid }}" aria-label="Grid view" onClick="{{ setGrid }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+<button aria-pressed="{{ isList }}" aria-label="List view" onClick="{{ setList }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h2M10 6h10M4 12h2M10 12h10M4 18h2M10 18h10"/></svg></button>
 </div>
 </div>
 <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
@@ -92,12 +140,17 @@ class Component extends DCLogic {
   renderVals() {
     const p = this.props;
     const noop = () => {};
+    const fm = p.filterModel || {};
     const results = p.results || [];
     const layout = p.layout === 'list' ? 'list' : 'grid';
     return {
       bannerA: p.bannerA === undefined ? 'Shop the' : p.bannerA,
       bannerB: p.bannerB === undefined ? 'Collection' : p.bannerB,
-      filterModel: p.filterModel, // undefined makes FilterPanel render its demo model
+      fCats: fm.categories || [], fColors: fm.colors || [], fSizes: fm.sizes || [],
+      priceMin: fm.priceMin === undefined ? 0 : fm.priceMin, priceMax: fm.priceMax === undefined ? 100 : fm.priceMax,
+      priceValue: fm.priceValue === undefined ? 100 : fm.priceValue,
+      priceMinLabel: fm.priceMinLabel || '$0', priceValueLabel: fm.priceValueLabel || '$100',
+      onPrice: fm.onPrice || noop, fActive: !!fm.hasActive, fClear: fm.onClear || noop,
       results, count: results.length,
       listTitle: p.listTitle || 'All products',
       hasResults: results.length > 0, noResults: results.length === 0,

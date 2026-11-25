@@ -28,6 +28,7 @@ Anything left out is listed below.
 - `motion/kokuro-gl.js`
 - `motion/kokuro-motion.js`
 - `motion/matrix-intro.js`
+- `motion/scroll-acts.js`
 - `theme/furry.css`
 - `theme/human.css`
 - `assets/` — files uploaded to the design (images, fonts, media)
@@ -36,7 +37,7 @@ Anything left out is listed below.
 ## Uploaded files
 
 Images, fonts and media uploaded to the design are written once each under
-`assets/` — 23 in this export — and the exported files refer to them there. A
+`assets/` — 26 in this export — and the exported files refer to them there. A
 reference a script puts together while the page runs (for example
 `"/_blob/" + id`) is not rewritten and does not load from this folder.
 

@@ -12,7 +12,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .kcc{position:relative;display:flex;flex-direction:column;height:100%;background:var(--k-surface);border:1px solid var(--k-line);color:var(--k-ink);font-family:var(--k-font-body);clip-path:polygon(0 0,100% 0,100% calc(100% - 20px),calc(100% - 20px) 100%,0 100%);transition:border-color .25s,transform .25s}
@@ -47,8 +47,8 @@ body{margin:0}
 </style>
 </helmet>
 <article class="kcc {{ layoutCls }}">
-<button class="kcc-media" data-k-tilt="2.5" onClick="{{ open }}" aria-label="View {{ name }}">
-<sc-if value="{{ hasPhoto }}" hint-placeholder-val="{{ true }}"><img class="kcc-photo" src="{{ image }}" alt="" style="object-position: {{ imagePos }}"></sc-if>
+<button class="kcc-media" data-k-tilt="2.5" onClick="{{ open }}" aria-label="View {{ name }}" style="background: {{ bg }}">
+<sc-if value="{{ hasPhoto }}" hint-placeholder-val="{{ true }}"><img class="kcc-photo" src="{{ image }}" alt="" style="object-position: {{ imagePos }}; object-fit: {{ fit }}"></sc-if>
 <sc-if value="{{ noPhoto }}" hint-placeholder-val="{{ false }}"><span class="kcc-artbox k-art"><img src="{{ artUrl }}" alt=""></span><span class="kcc-concept">Concept art</span></sc-if>
 <sc-if value="{{ hasTag }}" hint-placeholder-val="{{ false }}"><span class="k-tag kcc-tag">{{ tag }}</span></sc-if>
 <span class="kcc-scrim"><p class="kcc-cat">{{ categoryLabel }}</p></span>
@@ -86,6 +86,7 @@ class Component extends DCLogic {
       layoutCls: this.props.layout === 'list' ? 'kcc-list' : '',
       name: it.name, categoryLabel: it.categoryLabel, priceLabel: it.priceLabel,
       hasPhoto: !!it.hasPhoto, noPhoto: !it.hasPhoto,
+      fit: it.fit || 'cover', bg: it.bg || 'var(--k-surface-2)',
       image: it.image || '', imagePos: it.imagePos || '50% 50%', artUrl: it.artUrl || '',
       tag: it.tag || '', hasTag: !!it.tag,
       swatches: sw, colorAria: sw.length > 1 ? 'Colors: ' + sw.map((c) => c.label).join(', ') : 'Color: ' + (sw[0] ? sw[0].label : ''),

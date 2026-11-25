@@ -41,6 +41,11 @@
   var doc = document;
   var root = doc.documentElement;
   var self = doc.currentScript;
+  // currentScript can be null when the host re-injects scripts, so fall back to finding our own tag.
+  if (!self || !self.src) {
+    var tags = doc.querySelectorAll('script[src*="kokuro-motion"]');
+    self = tags.length ? tags[tags.length - 1] : null;
+  }
   var BASE = self && self.src ? self.src : '';
 
   /* ---- configuration ------------------------------------------------- */
@@ -434,9 +439,17 @@
   function loadMatrixIntro() {
     if (window.KokuroMatrixIntro) return Promise.resolve(window.KokuroMatrixIntro);
     if (matrixP) return matrixP;
-    var src = BASE ? new URL('matrix-intro.js', BASE).href : './motion/matrix-intro.js';
-    matrixP = loadScript(src).then(function (ok) {
-      if (!ok || !window.KokuroMatrixIntro) { matrixP = null; throw new Error('matrix-intro failed to load'); }
+    // Try the URL next to this script first, then likely published paths.
+    var tries = [];
+    if (BASE) tries.push(new URL('matrix-intro.js', BASE).href);
+    tries.push('./motion/matrix-intro.js', 'motion/matrix-intro.js', './project/motion/matrix-intro.js', '/project/motion/matrix-intro.js');
+    matrixP = tries.reduce(function (p, src) {
+      return p.then(function (ok) {
+        if (ok || window.KokuroMatrixIntro) return true;
+        return loadScript(src);
+      });
+    }, Promise.resolve(false)).then(function (ok) {
+      if (!window.KokuroMatrixIntro) { matrixP = null; throw new Error('matrix-intro.js failed to load (tried ' + tries.join(', ') + ')'); }
       return window.KokuroMatrixIntro;
     });
     return matrixP;

@@ -56,12 +56,19 @@ type Inquiry = { name: string; email: string; productType: string; quantity: num
 ```
 Money is integer cents, formatted by `money()`. Lines merge on product + variant.
 
+## Catalog source (updated from the original store)
+- Products, names, prices and descriptions now come from the original Kokuro Customs store (`store-main/index.html`, `Business Summary.md`): 28 items plus 6 ready-made posters. Kokuro is a made-to-order commission shop: a non-refundable $25 design deposit per distinct item, two free revision rounds ($10 each after), balance due after mockup approval, ships internationally. The Fursona Bar tee and the posters are ready-made, not commissions.
+- Category ids match the original: jersey, tops, outerwear, bottoms, underwear, footwear, headwear, accessories, drinkware, home, pets, posters. Variable pricing: Zip Hoodie ($95, $105 from 2XL), Sherpa Blanket ($55 / $65 / $85), posters ($19.99 / $26.99 / $34.99).
+- Photos are the original Printful-style mockups, resized to about 1000px.
+
+## Not carried over from the original store (next agent)
+- Commission checkout: the deposit flow, custom-details fields (jersey name/number, bar tee fields), ref-sheet upload, multi-currency (USD/EUR/CAD) with tax (8% US, 21% EU VAT, 13% CAD GST/HST), Venmo / Cash App / PayPal handling, EmailJS and Formspree. This preview has a plain cart only.
+- Size charts, the poster "Buy on Printful" links, and the original FAQ page.
+- Stock flags are all "in stock" and SKUs are invented.
+
 ## Placeholders (do not ship as fact)
-- Every product name, price, SKU, stock flag, color, category count, and the shipping / returns / quality copy is demo data. Only the $28 Lone Wolf Tee price comes from the mockups.
 - Ratings, review counts, wishlist hearts and "42 products" style counts from the mockups are intentionally not built.
-- The custom-prints process steps, "DTG, DTF & Embroidery" and feature lines come from the mockups; confirm before launch. Custom examples are brand-art stand-ins labelled "Concept".
-- Photos are concept imagery (tee, hoodie, cap about 350px wide, plus crops of the hero photo). Colorway swatches do not change the photo until real mockups exist. Replace with Printful/Printify mockups.
-- `[ADD SUPPLIER SIZE CHART]` shows on the product page.
+- Home page headline and about copy are from the design mockups; confirm before launch.
 
 ## Not built (next agent)
 1. Checkout (button disabled): order creation, payment provider, tax, shipping.

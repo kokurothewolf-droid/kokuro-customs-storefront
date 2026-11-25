@@ -12,7 +12,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .kd{color:var(--k-ink);font-family:var(--k-font-body)}
@@ -51,6 +51,12 @@ body{margin:0}
 .kd-pol div{display:flex;gap:12px;font-size:12px;line-height:1.5;color:var(--k-ink-dim)}
 .kd-pol svg{flex:none;color:var(--k-ink)}
 .kd-pol b{display:block;margin-bottom:2px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--k-ink)}
+.kd-sec{margin-top:22px;padding-top:20px;border-top:1px solid var(--k-line-strong)}
+.kd-ul{margin:0;padding:0 0 0 18px;font-size:14px;line-height:1.7;color:var(--k-ink-soft)}
+.kd-chart{max-width:420px;font-size:14px}
+.kd-cr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--k-line);color:var(--k-ink-soft)}
+.kd-cr b{color:var(--k-ink)}
+.kd-ch{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--k-muted)}
 .kd-demo{margin:14px 0 0;font-size:11px;color:var(--k-muted)}
 .kd-more{padding:56px 0 80px;background:var(--k-surface-2);border-top:1px solid var(--k-line)}
 .kd-more-in{display:grid;grid-template-columns:minmax(200px,.5fr) minmax(0,3fr);gap:32px;align-items:center}
@@ -58,12 +64,20 @@ body{margin:0}
 .kd-rel{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:20px}
 @media (max-width:1100px){
 .kd-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.kd-thumbs{grid-column:1 / -1;flex-direction:row;order:2}
-.kd-th{width:84px;height:92px}
+.kd-thumbs{grid-column:1 / -1;flex-direction:row;order:2;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.kd-th{width:84px;height:92px;flex:none}
 .kd-more-in{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:760px){
-.kd-grid{grid-template-columns:minmax(0,1fr)}
+.kd-grid{grid-template-columns:minmax(0,1fr);gap:16px}
+.kd-grid>div:nth-child(2){order:1}
+.kd-grid>div:nth-child(3){order:3;min-width:0}
+.kd-thumbs{order:2}
+.kd-h1{font-size:clamp(44px,13vw,64px);overflow-wrap:anywhere}
+.kd-blurb{max-width:none}
+.kd-crumbs{padding-top:10px}
+.kd-buy{gap:14px}
+.kd-chart{max-width:none}
 .kd-opts{grid-template-columns:minmax(0,1fr);gap:22px}
 .kd-pol{grid-template-columns:minmax(0,1fr)}
 }
@@ -72,7 +86,7 @@ body{margin:0}
 <div class="kd k-root" style="min-height: 0">
 <div class="k-wrap">
 <nav class="kd-crumbs" aria-label="Breadcrumb">
-<button onClick="{{ onHome }}" aria-label="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg></button><span aria-hidden="true">/</span>
+<button onClick="{{ onHome }}" aria-label="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></button><span aria-hidden="true">/</span>
 <button onClick="{{ onShopAll }}">Shop</button><span aria-hidden="true">/</span>
 <button onClick="{{ onBack }}">{{ categoryLabel }}</button><span aria-hidden="true">/</span>
 <b aria-current="page">{{ name }}</b>
@@ -81,19 +95,19 @@ body{margin:0}
 <div class="kd-grid">
 <div class="kd-thumbs" role="group" aria-label="Product images">
 <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="3">
-<button class="kd-th" data-k-reveal="rise" aria-pressed="{{ g.on }}" aria-label="Show image {{ g.n }}" onClick="{{ g.select }}">
-<sc-if value="{{ g.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ g.image }}" alt="" style="object-position: {{ g.imagePos }}; transform: scale({{ g.zoom }}); transform-origin: {{ g.imagePos }}"></sc-if>
+<button class="kd-th" data-k-reveal="rise" aria-pressed="{{ g.on }}" aria-label="Show image {{ g.n }}" onClick="{{ g.select }}" style="background: {{ g.bg }}">
+<sc-if value="{{ g.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ g.image }}" alt="" style="object-position: {{ g.imagePos }}; object-fit: {{ g.fit }}; transform: scale({{ g.zoom }}); transform-origin: {{ g.imagePos }}"></sc-if>
 <sc-if value="{{ g.noPhoto }}" hint-placeholder-val="{{ false }}"><span class="k-art"><img src="{{ g.artUrl }}" alt=""></span></sc-if>
 </button>
 </sc-for>
 </div>
 
 <div>
-<div class="kd-stage" data-k-tilt="2.5">
-<sc-if value="{{ stage.hasPhoto }}" hint-placeholder-val="{{ true }}"><img data-k-reveal="slash" src="{{ stage.image }}" alt="{{ name }}" style="object-position: {{ stage.imagePos }}; transform: scale({{ stage.zoom }}); transform-origin: {{ stage.imagePos }}"></sc-if>
+<div class="kd-stage" data-k-tilt="2.5" style="background: {{ stage.bg }}">
+<sc-if value="{{ stage.hasPhoto }}" hint-placeholder-val="{{ true }}"><img data-k-reveal="slash" src="{{ stage.image }}" alt="{{ name }}" style="object-position: {{ stage.imagePos }}; object-fit: {{ stage.fit }}; transform: scale({{ stage.zoom }}); transform-origin: {{ stage.imagePos }}"></sc-if>
 <sc-if value="{{ stage.noPhoto }}" hint-placeholder-val="{{ false }}"><div class="k-art" role="img" aria-label="{{ name }} concept art"><img src="{{ stage.artUrl }}" alt=""></div></sc-if>
 </div>
-<p class="kd-cap">Concept imagery. Final photos and colorways come with the print partner.</p>
+<p class="kd-cap">{{ caption }}</p>
 </div>
 
 <div>
@@ -129,21 +143,36 @@ body{margin:0}
 <div>
 <p class="kd-lab">Quantity</p>
 <div class="kd-step" role="group" aria-label="Quantity">
-<button onClick="{{ dec }}" disabled="{{ decDisabled }}" aria-label="Decrease quantity"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+<button onClick="{{ dec }}" disabled="{{ decDisabled }}" aria-label="Decrease quantity"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
 <output aria-live="polite">{{ qty }}</output>
-<button onClick="{{ inc }}" aria-label="Increase quantity"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+<button onClick="{{ inc }}" aria-label="Increase quantity"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </div>
 </div>
-<button class="k-btn" data-k-magnetic="0.12" style="flex: 1 1 240px; min-height: 56px" onClick="{{ add }}" disabled="{{ addDisabled }}"><span>Add to cart <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
+<button class="k-btn" data-k-magnetic="0.12" style="flex: 1 1 240px; min-height: 56px" onClick="{{ add }}" disabled="{{ addDisabled }}"><span>Add to cart <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></button>
 </div>
 <p class="kd-status" role="status">{{ status }}</p>
 
 <div class="kd-pol">
-<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h12v10H2zM14 9h4l3 3v4h-7z"></path><circle cx="6.5" cy="17.5" r="1.7"></circle><circle cx="17.5" cy="17.5" r="1.7"></circle></svg><span><b>Shipping</b>{{ shipping }}</span></div>
-<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"></path><path d="m3 7.5 9 4.5 9-4.5M12 12v9"></path></svg><span><b>Returns</b>{{ returns }}</span></div>
-<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6z"></path><path d="m8.5 12 2.5 2.5L15.5 10"></path></svg><span><b>Quality</b>{{ quality }}</span></div>
+<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h12v10H2zM14 9h4l3 3v4h-7z"/><circle cx="6.5" cy="17.5" r="1.7"/><circle cx="17.5" cy="17.5" r="1.7"/></svg><span><b>Shipping</b>{{ shipping }}</span></div>
+<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/></svg><span><b>Returns</b>{{ returns }}</span></div>
+<div><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.8-1.2 8-4.5 8-9V6z"/><path d="m8.5 12 2.5 2.5L15.5 10"/></svg><span><b>Quality</b>{{ quality }}</span></div>
 </div>
-<p class="kd-demo">Shipping, returns and quality copy is demo text. SKU {{ sku }}. [ADD SUPPLIER SIZE CHART]</p>
+<sc-if value="{{ hasDetails }}" hint-placeholder-val="{{ false }}">
+<div class="kd-sec">
+<p class="kd-lab">Details</p>
+<ul class="kd-ul"><sc-for list="{{ details }}" as="d" hint-placeholder-count="4"><li>{{ d.t }}</li></sc-for></ul>
+</div>
+</sc-if>
+<sc-if value="{{ hasChart }}" hint-placeholder-val="{{ false }}">
+<div class="kd-sec">
+<p class="kd-lab">Size chart <span>inches</span></p>
+<div class="kd-chart" role="table" aria-label="Size chart">
+<div class="kd-cr kd-ch" role="row"><span role="columnheader">Size</span><span role="columnheader">Length</span><span role="columnheader">Width</span></div>
+<sc-for list="{{ chart }}" as="r" hint-placeholder-count="5"><div class="kd-cr" role="row"><b role="cell">{{ r.size }}</b><span role="cell">{{ r.length }}</span><span role="cell">{{ r.width }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+<p class="kd-demo">SKU {{ sku }}. Prices in USD; local tax is added at checkout.</p>
 </div>
 </div>
 </div>
@@ -199,9 +228,11 @@ class Component extends DCLogic {
     const color = p.colors.find((c) => c.id === cur.colorId) || p.colors[0] || { label: '' };
     const size = p.sizes.find((z) => z.id === cur.sizeId) || p.sizes[0] || { label: '' };
     const onAdd = this.props.onAdd || (() => {});
-    const g = p.gallery.map((x, i) => ({
+    const list = (p.galleryByColor && p.galleryByColor[cur.colorId]) || p.gallery;
+    const g = list.map((x, i) => ({
       n: i + 1, on: i === cur.gi, hasPhoto: !!x.hasPhoto, noPhoto: !x.hasPhoto,
       image: x.image || '', imagePos: x.imagePos || '50% 50%', zoom: x.zoom || 1, artUrl: x.artUrl || '',
+      fit: x.fit || 'cover', bg: x.bg || 'var(--k-surface-2)',
       select: () => patch({ gi: i })
     }));
     const stage = g[cur.gi] || g[0];
@@ -210,12 +241,15 @@ class Component extends DCLogic {
       name: p.name, categoryLabel: p.categoryLabel, blurb: p.blurb, sku: p.sku,
       tag: p.tag || '', hasTag: !!p.tag,
       gallery: g, stage,
+      caption: p.caption || 'Concept imagery. Final photos and colorways come with the print partner.',
+      hasDetails: (p.details || []).length > 0, details: (p.details || []).map((t) => ({ t })),
+      hasChart: (p.sizeChart || []).length > 0, chart: p.sizeChart || [],
       priceLabel: sel ? sel.priceLabel : '',
       hasColors: p.colors.length > 1, colorLabel: color.label,
       colors: p.colors.map((c) => ({ label: c.label, hex: c.hex, on: c.id === cur.colorId,
         select: () => {
           const keep = avail(c.id, cur.sizeId) ? cur.sizeId : ((p.sizes.find((z) => avail(c.id, z.id)) || p.sizes[0] || {}).id);
-          patch({ colorId: c.id, sizeId: keep });
+          patch({ colorId: c.id, sizeId: keep, gi: 0 });
         } })),
       sizeNoun: p.sizeNoun || 'Size', sizeLabel: size.label,
       sizes: p.sizes.map((z) => {

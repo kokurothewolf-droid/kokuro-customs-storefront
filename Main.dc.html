@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="./theme/human.css">
 <link rel="stylesheet" href="./theme/furry.css">
 <script src="./motion/kokuro-motion.js"></script>
+<script src="./motion/scroll-acts.js"></script>
 </head>
 <body>
 <x-dc>
@@ -24,7 +25,7 @@
 </div>
 
 <sc-if value="{{ isHumanHome }}" hint-placeholder-val="{{ true }}">
-<main><dc-import name="HomePage" tiles="{{ tiles }}" cat-rows="{{ catRows }}" on-shop="{{ goShopAll }}" on-custom="{{ goCustom }}" hint-size="100%,4000px"></dc-import></main>
+<main><dc-import name="HomePage" rail="{{ rail }}" slip="{{ slipModel }}" cat-rows="{{ catRows }}" ready="{{ readyCards }}" on-ready="{{ goReady }}" on-shop="{{ goShopAll }}" on-custom="{{ goCustom }}" on-commission="{{ onCommission }}" hint-size="100%,4000px"></dc-import></main>
 </sc-if>
 
 <sc-if value="{{ isFurryHome }}" hint-placeholder-val="{{ false }}">
@@ -40,7 +41,7 @@
 </sc-if>
 
 <sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}">
-<main><dc-import name="CustomPage" on-inquiry="{{ onInquiry }}" hint-size="100%,2400px"></dc-import></main>
+<main><dc-import name="CustomPage" slip="{{ slipModel }}" on-inquiry="{{ onInquiry }}" hint-size="100%,2400px"></dc-import></main>
 </sc-if>
 
 <sc-if value="{{ isCart }}" hint-placeholder-val="{{ false }}">
@@ -64,13 +65,15 @@ class Component extends DCLogic {
     category: 'all', query: '', sort: 'featured', layout: 'grid',
     maxPrice: null, color: '', size: '',
     cartOpen: false, cart: [], products: [],
-    furryBusy: false
+    furryBusy: false,
+    slip: []                 // product ids picked on the home page rail (the commission slip)
   };
 
   componentDidMount() {
     const api = this.api();
     api.listProducts().then((products) => this.setState({ products }));
     api.getCart().then((cart) => this.setState({ cart }));
+    try { const sl = JSON.parse(window.localStorage.getItem('kokuro.slip.v1') || '[]'); if (Array.isArray(sl)) this.setState({ slip: sl.filter((x) => typeof x === 'string').slice(0, 30) }); } catch (e) {}
     // Restore the saved mode without any animation. Cart and view state are untouched.
     try { if (window.localStorage.getItem('kokuro.mode.v1') === 'furry') this.setState({ theme: 'furry' }); } catch (e) {}
     // Public theme API. Human -> Furry plays the Matrix intro (see MOTION.md);
@@ -118,7 +121,8 @@ class Component extends DCLogic {
     })).then((res) => {
       done();
       return res;
-    }, () => {
+    }, (err) => {
+      try { console.error('[Kokuro] Matrix intro failed, using claw transition instead:', err); } catch (e) {}
       // Loading failed (offline, blocked): fall back to the claw transition, never leave a dead button.
       return Promise.resolve(km.transition({ mode: 'theme', swap: activate })).then(done, done);
     });
@@ -179,24 +183,43 @@ class Component extends DCLogic {
 
   categories() {
     return [
-      { id: 'tees', label: 'T-Shirts', group: 'apparel' },
-      { id: 'hoodies', label: 'Hoodies', group: 'apparel' },
-      { id: 'headwear', label: 'Headwear', group: 'apparel' },
+      { id: 'ready', label: 'Ready-Made', group: 'ready' },
+      { id: 'jersey', label: 'Jerseys', group: 'jersey' },
+      { id: 'tops', label: 'Tops', group: 'tops' },
+      { id: 'outerwear', label: 'Outerwear', group: 'outerwear' },
+      { id: 'bottoms', label: 'Bottoms', group: 'bottoms' },
+      { id: 'underwear', label: 'Underwear', group: 'underwear' },
+      { id: 'footwear', label: 'Footwear', group: 'footwear' },
+      { id: 'headwear', label: 'Headwear', group: 'headwear' },
+      { id: 'accessories', label: 'Accessories', group: 'accessories' },
       { id: 'drinkware', label: 'Drinkware', group: 'drinkware' },
-      { id: 'desk-gear', label: 'Desk Gear', group: 'desk-gear' },
-      { id: 'stickers', label: 'Stickers', group: 'stickers' }
+      { id: 'home', label: 'For Your Home', group: 'home' },
+      { id: 'pets', label: 'For Your Pet', group: 'pets' }
     ];
   }
 
-  /* MOCK DATA: all names, prices, stock, colors, policies and counts are
-     placeholders. Money is integer cents. */
+  /* CATALOG: sourced from the original Kokuro Customs store (store-main/index.html and
+     Business Summary.md). Prices are USD, stored as integer cents. Kokuro is a made-to-order
+     commission shop: every item except the Fursona Bar tee and the posters is designed around
+     the customer's fursona, with a non-refundable $25 design deposit per distinct item. */
   mockCatalog() {
     const cats = {}; this.categories().forEach((c) => { cats[c.id] = c; });
     const COLORS = {
-      black: { id: 'black', label: 'Black', hex: '#111111' },
-      charcoal: { id: 'charcoal', label: 'Charcoal', hex: '#3A3A3A' },
-      bone: { id: 'bone', label: 'Bone', hex: '#E9E3D8' },
-      crimson: { id: 'crimson', label: 'Crimson', hex: '#8E1119' }
+      custom: { id: 'custom', label: 'Custom print', hex: '#2A2A2A' },
+      black: { id: 'black', label: 'Black', hex: '#0c0b0b' },
+      navy: { id: 'navy', label: 'Midnight Navy', hex: '#1d242e' },
+      royal: { id: 'royal', label: 'Royal Blue', hex: '#274c97' },
+      grey: { id: 'grey', label: 'Heather Grey', hex: '#9a978e' },
+      white: { id: 'white', label: 'White', hex: '#ffffff' },
+      natural: { id: 'natural', label: 'Natural', hex: '#f3e6d4' },
+      cream: { id: 'cream', label: 'Cream', hex: '#e0cbb9' },
+      'graphite-black': { id: 'graphite-black', label: 'Graphite Black', hex: '#3d3a3a' },
+      'heavy-metal': { id: 'heavy-metal', label: 'Heavy Metal', hex: '#4a4849' },
+      'cool-blue': { id: 'cool-blue', label: 'Cool Blue', hex: '#0c4268' },
+      'light-blue': { id: 'light-blue', label: 'Light Blue', hex: '#e2f3f0' },
+      'forest-green': { id: 'forest-green', label: 'Forest Green', hex: '#2b4236' },
+      red: { id: 'red', label: 'Red', hex: '#c81238' },
+      'desert-pink': { id: 'desert-pink', label: 'Desert Pink', hex: '#f3ab93' }
     };
     const slug = (l) => l.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const build = (colorIds, sizeLabels, price, oos, priceFor) => {
@@ -210,48 +233,188 @@ class Component extends DCLogic {
       })));
       return { colors, sizes, variants };
     };
+    const B = (id) => '/_blob/' + id;
+    const IMG = {
+      'baseball-jersey': '60b5bd7810c706ec98bd67403247f20b', 'baseball-jersey-back': '548b7406306ff510c03c7aedfe59be6f',
+      'hockey-jersey': '4dd8300d3303438c5b49e3529413557e', 'basketball-jersey': 'c6cf16d2a7d4707e2f7199e197635342',
+      'football-jersey': '9a5645018a1c3cb35453c911e60f8600', 'unisex-tee': 'e5a13d31a79a415b246e922340987d25',
+      'tank-top': '279e54a7208ce8c61b619b0f5bcbbf1f', 'button-up': '2364ce6c1c41f88ff7c49d8f60170351',
+      'fursona-bar-tee': '27400162851182ff28d2ed393c08e86d', 'fursona-bar-tee-model': 'd0b638c939a1369a6366ba411122497d',
+      'pullover-hoodie': 'f0ba175c459af73e419bef2375d510b4', 'pullover-hoodie-back': 'eb38611a50cc2b3b6529e31cd1524c2c',
+      'zip-hoodie': '85c122ffb166eb522e4489690fc3e8bb', 'letterman-jacket': '24b5036672f16abd89401afc3cf95c1e',
+      'athletic-shorts': 'c458272be338968ba43106a585dfd117', 'joggers': 'e44dc2edf21a51ebddd3d6cd19b6b91e',
+      'track-pants': 'ae7402434be016abf1e7ee3d45e3c982', 'boxers': '2932829807862187e57bc3d64e37ac41',
+      'boxers-back': '94b5d7c9d8b4afee96a22cd518d30404', 'snapback': '843c58dbffa7fff3d7f763fd78be1700',
+      'high-top-shoes': '212aeffc03ef26c899d56bb6199a5840', 'sherpa-blanket': '8ab397c0f00b92aa1ad5fcdf1c57dfca',
+      'tumbler': 'a91b078892e910b25a32e556fa76aa80', 'travel-mug': '86548275c21f6c1ba3d49c3af27135b8',
+      'iphone-case': '83642df052b95a473f0844638723e8e3', 'samsung-case': 'f63b6a2e5e400fe7c6f6606b8960a863',
+      'tote': 'c7a13f405f969563aeb86e554209620e', 'patch': '7fbe1226de4835c2f6626752bdadc0dd',
+      'bandana': 'f15f92244a291fd37be7eb95c04798f4', 'pin-buttons': 'd36e5886b420831a93bfe1edf04f5744',
+      'neck-gaiter': 'dd37c0879dc1d3a31a49a27576f63866', 'pet-collar': '92d998acdc6d2b975aeebdc2ba81236d',
+      'pet-collar-back': '79f7edb86988123cc4f3f12f2d67a27e', 'poster-fur-not-war': '0f83825a5dd7c885725e21338bafb130',
+      'poster-want-you': '48683d451a9b5cf332ae3eb87d143bc8', 'poster-unite': '1e5a4942142277baeb9195ea5dd33221',
+      'poster-we-can': '9303d39a6b3d6b157f8fe2d274994a06', 'poster-future': 'ba66442c0f769a81176c8fe70e3985f9',
+      'poster-wilder': '2658184fff5d2985f995396c8eca188b',
+      'poster-gta-furry-ban': 'c8cac61bad01b770dbbb379ef73092a1'
+    };
+    const ph = (key, pos) => ({ kind: 'photo', src: B(IMG[key]), pos: pos || '50% 50%', zoom: 1 });
     const APP = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
-    const A = this.assets();
-    const ph = (src, pos, zoom) => ({ kind: 'photo', src, pos, zoom: zoom || 1 });
-    const art = (k) => ({ kind: 'art', art: k });
-    const P = (o) => Object.assign({ tag: '', sizeNoun: 'Size' }, o, { categoryLabel: cats[o.category].label, group: cats[o.category].group, media: o.gallery[0] });
+    const NOTE = ' Made to order from your fursona ref sheet.';
+    const POL_CUSTOM = {
+      shipping: 'Ships internationally, direct from the print partner once approved',
+      returns: 'Made to order: $25 non-refundable design deposit per item, 2 free revisions',
+      quality: 'Nothing prints until you approve the final mockup'
+    };
+    const POL_READY = {
+      shipping: 'Ships direct from the print partner, calculated at checkout',
+      returns: 'Ready-made print: no commission deposit',
+      quality: 'Same graphic on every piece'
+    };
+    // C = one catalog item. imgs: image keys (first is the card photo). ready: not a commission piece.
+    const C = (o) => {
+      const imgs = o.imgs || [o.id];
+      return Object.assign({ tag: '', sizeNoun: 'Size', policies: o.ready ? POL_READY : POL_CUSTOM }, o, {
+        blurb: o.blurb + (o.ready || o.noNote ? '' : NOTE),
+        categoryLabel: cats[o.category].label, group: cats[o.category].group,
+        gallery: imgs.map((k) => ph(k, o.pos)), media: ph(imgs[0], o.pos)
+      }, build(o.colorIds || ['custom'], o.sizes || APP, o.price, null, o.priceFor));
+    };
+    // Fitted tee designs (Next Level 3600). Each design has 4 photos per garment color:
+    // [flat front, model front, model angle, flat back]. To add a design, add one PHOTOS entry and one FIT() call.
+    const NL3600 = {
+      colors: ['black', 'navy', 'royal', 'grey', 'white', 'natural', 'cream', 'graphite-black', 'heavy-metal', 'cool-blue', 'light-blue', 'forest-green', 'red', 'desert-pink'],
+      sizes: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'],
+      blurb: "The Next Level 3600 Men's Fitted T-Shirt combines softness with a modern, tailored fit that holds its shape wash after wash. Its lightweight feel makes it a natural everyday favorite, while the tear-away tag offers room for custom branding.",
+      details: ['100% ring-spun combed cotton', 'Heather Grey is 90% cotton, 10% polyester', 'Fabric weight: 4.3 oz/y² (145.8 g/m²)', '32 singles', 'Pre-shrunk', 'Tear-away tag', 'Blank product sourced from Honduras, Nicaragua, Mexico, or Cambodia'],
+      chart: [['XS', '27', '17½'], ['S', '28', '19'], ['M', '29', '20½'], ['L', '30', '22'], ['XL', '31', '24'], ['2XL', '32', '26'], ['3XL', '33', '28'], ['4XL', '34', '30'], ['5XL', '35', '32']]
+    };
+    const PHOTOS = {
+      'pawtagonia-tee': {
+        black: ['1015e8b8eb135fd1f62bc41281f97f9b', 'a33dfcbde6505fa1395efda1f08bf4b6', 'e36a2540f6c4c2475522264186198cd4', '0f1db99cbd3c7145e1a3234cb3a8b922'],
+        navy: ['e100bb69e20bdabdda3df2dbf2c7a4ad', '4022741e66933cd91386519db285bde0', '078ffb7c8157de58c562b9bcde77dc5c', '35ff29c06e06d383f57d07a85c63f7ce'],
+        royal: ['61c26e55ff8238390a3fe041ddb097b9', '11670fa1574043804ba963e994e98407', 'f03006ff29aa6f578374a63bbd42dc5c', '4588f774e577c5d2bb8d74e53ab95a5c'],
+        grey: ['d1a6446721f112d611fd8123f61d1c0d', '955a7214e7bb3fe5f06eb03761c2f65c', 'a0ef3f6bf1135b8dd2f2f9dfe9da7882', '3de7ba4d830820e51d67a11db5423678'],
+        white: ['204f25045fbbb960cead491e5884eebc', '8364ef17e679594804122bbd310d6d37', '63de62723e2a4d7ced7d11c885f2dd34', '9e52960198dcbffbcbc1d109886d2365'],
+        natural: ['5444d5eae8ed44c523759dabe5ad37d8', '8af8d8ec6d0ab91841467af48e3f3e3a', 'aa4dbea9db37d94bcd411ee861bc4e76', 'c3731c619da7f697e92f47c800100c3f'],
+        cream: ['2556871da920d2bb33c1ccdfc2420d26', '78ae0424f88e85016fde410c659f99c6', 'e05eb684a26d179e0a09bc4e6d153f14', '881e9bcfa92ddd8534eae2565cf4c220'],
+        'graphite-black': ['17a3901b3e010f633e003e1d90c28e86', 'b5c5a32bc9217b0aeb49d4d1472f42c7', '7067def73750ba1b28d07b04ca3b5075', '9353f666ce2c1f6fb8f292046b85c317'],
+        'heavy-metal': ['b062ab147b7c75c246c463958a8e815a', 'dd43f2b4b2ef721f82d5e4507ae15c58', '5c87b64a23a46f8621fdb12636753ea0', 'dcf7747ca7595edc094f79e8c7e8c7cf'],
+        'cool-blue': ['bc8e7ece6a0aeb950488f4b3372bb8f8', '8c70963b8dd2cd3adf2ad2455d9ecc31', '3e82a2d561363c7709440ba23e4b6be8', 'a4cbea78744d5afd9582260ec09c9257'],
+        'light-blue': ['02c66deaff6e49cb86317c5a4580aa31', '66175a6f848e25371a132512b79c19bc', '72ccf72728b10095c4d5f4ecbdb43e3d', 'f5e42b56cc0ce4988deb659d140f2f99'],
+        'forest-green': ['bbd7dc7c4edac4f1a620dd6a3e5e3134', '10843cb18dd481fe2d97bbed0dfc29ff', '086457ccd4bf870539059f2747ef0b03', '70d1f10e6219cb99632e740ba062d8d6'],
+        red: ['1be662b30a49140e1de141683ba93d03', 'b74b56c41b01358eb4df8de6d803f9f2', '9a9fd9bbe296c2210a147fc8642305d5', 'cb8ae5dd452d80b680eefebf2b31cd3b'],
+        'desert-pink': ['f889162dcc9634ddeadc7c44684b64d7', '8df0c96f4a7413d04a1e42164282d25f', 'fd1aaaf077821b00ee30029e9d705f87', 'd04cc195cb1a0a83fd62e01d4b20168c']
+      }
+    };
+    // Furrberry: 4 colors x 6 photos [flat front, model front, model left-front, model right-front, model back, flat back]
+    PHOTOS['furrberry-tee'] = {
+      black: ['3354a720e4bafc6faef6840d95524bfd', '10ead207c5faec18b2c7f8827bc00943', 'f9859bd6f437f16cd425e035ebf9e9f8', 'd59ac438cb90e43aa727c5c58f38287b', 'a5147377fdad1e23c254894c93b2c644', '2583665737c3ccc47aeac988e64078dc'],
+      'cool-blue': ['365fe1a892093f1df50d40380eeccaf4', '70f1d46e253403d9e9adbb5ef0a3f36c', '489d7bd62ad915f7f64ceb8d1a7612a4', '6e13211591b7def632669bf3723e3442', '836acb44a67beb44aad5811991923c04', '433c7c10f338d8c20ca904eb51cf0de0'],
+      'graphite-black': ['fc34e638e9cb232999ee9ae217fac94a', 'cd007890a0e0206da24e1c2a63588c48', '353b45fa0f31450a2881bccb1f5cce64', 'c814f59aa7be141304f9284f59aa88d3', 'bc358340eb34e057e5a7b2b67a2ff69d', '9dc58a26494c48e15a3a56fa0560d4d9'],
+      navy: ['f76753ce85470496835cef342b3b2201', '914064535d25cf7649b4554c09744cce', 'c06ebd7090027c6569119144fbbd1ba3', '71ec36535db17853e2fa386c6e3aa829', '9ff4292690246cc229c36fd5ad330d47', 'cacbf461d3fe7fac0dc9ac5d7bd20b64']
+    };
+    PHOTOS['zerofox-tee'] = {
+      black: ['91ac835926c21798acef19baf02e6611', '409960a9cf41ef47c1e2ebd1e90b08a8', '2555c43319ec7930d7c9a1c48fe0d423', '31a4e2da1fdb6e3349af39f7c0927be3', '389d071387d5558db4df83988e7faeb5', '690ead90d0553494c8447c3c523eeff9'],
+      navy: ['bba50c51d50503e15aafca20114946c1', 'c9db1f996ef7dc6ebfdd6bf525015f07', 'ac2dc722c222a40ceca1a6ff6170a87b', '9559e24d53a31a5d150097589e5a9b30', '5c8b81ae20c9fb7856244247d0277066', '3483f3527d0439035813f7b34d7dcb43']
+    };
+    PHOTOS['zerofox-90s-tee'] = {
+      black: ['1caa7976c0f6680d908d57eb67ed2398', 'b5face0243bc343b62fdd2f6b4905a0b', '516d9ca89863f9001028cd4af27fc5d4', '4641c5f4077f256f579f69f48063a8da', 'eec9628609eb964c302f67e04bddac15', '9603928de3a9a7f5787126eb821ea251'],
+      navy: ['a256b01bca5f5651bf75d79e1539a2aa', '969e73abc7e2f0be5993e964f05a78b9', 'bf1ebb630442ef87375ad7b41fad8c0d', 'b1530db239b70ecf90f165c4e11e62d7', 'a9fcdc46f903aa8008959ef615c1a24c', 'f7e3b68712fe2791090a2662381dca02']
+    };
+    const FIT = (id, sku, name, extra, colorList) => {
+      const byColor = {};
+      const cl = colorList || NL3600.colors;
+      cl.forEach((c) => { byColor[c] = PHOTOS[id][c].map((bid) => ({ kind: 'photo', src: B(bid), pos: '50% 50%', zoom: 1, fit: 'contain', bg: '#cfcbc2' })); });
+      const first = byColor.black[0];
+      return Object.assign(C({ id, sku, name, category: 'ready', price: 5000, tag: 'New', ready: true, imgs: [],
+        colorIds: cl, sizes: NL3600.sizes, blurb: NL3600.blurb + (extra ? ' ' + extra : ''),
+        details: NL3600.details, sizeChart: NL3600.chart, galleryByColor: byColor,
+        caption: 'Photos show the design on each garment color.' }), { gallery: byColor.black, media: first });
+    };
+    const ZIP = { '2XS': 9500, XS: 9500, S: 9500, M: 9500, L: 9500, XL: 9500, '2XL': 10500, '3XL': 10500, '4XL': 10500, '5XL': 10500, '6XL': 10500 };
+    const BLANKET = { Throw: 5500, 'Large Throw': 6500, 'XL Throw': 8500 };
+    const POSTER = { '12 x 18 in': 1999, '20 x 30 in': 2699, '24 x 36 in': 3499 };
+    const poster = (id, key, name, blurb) => C({ id, sku: 'KC-' + id.toUpperCase().replace(/[^A-Z]/g, '').slice(6, 12), name, category: 'ready', ready: true, tag: 'Ready-made',
+      imgs: [key], sizes: Object.keys(POSTER), price: 1999, priceFor: (l) => POSTER[l],
+      blurb: blurb + ' Ready-made print; poster purchases are completed through Printful, separate from custom commissions.' });
     return [
-      P({ id: 'lone-wolf-tee', sku: 'KC-TEE-001', name: 'Lone Wolf Tee', category: 'tees',
-        blurb: 'A bold take on solitude and strength. A howling wolf, a pale moon and red leaves, printed on a clean, wear-anywhere black tee. Made to order.',
-        gallery: [ph(A.tee, '50% 40%'), ph(A.hero, '80% 62%'), ph(A.tee, '35% 25%', 1.7)],
-        ...build(['black', 'charcoal', 'bone', 'crimson'], APP, 2800, (c, s) => c === 'bone' && s === '3XL') }),
-      P({ id: 'red-moon-tee', sku: 'KC-TEE-002', name: 'Red Moon Wolf Tee', category: 'tees', tag: 'New',
-        blurb: 'The snarling wolf under a blood-red moon, on an oversized black tee. Made to order.',
-        gallery: [ph(A.hero, '80% 62%'), ph(A.hero, '78% 55%', 1.7)],
-        ...build(['black', 'charcoal'], APP, 3200) }),
-      P({ id: 'kokuro-hoodie', sku: 'KC-HOO-001', name: 'Kokuro Hoodie', category: 'hoodies', tag: 'New',
-        blurb: 'Red slash print across black, with the 黒狼 patch between the shoulders. Made to order.',
-        gallery: [ph(A.hoodie, '50% 30%'), ph(A.hoodie, '50% 55%', 1.7)],
-        ...build(['crimson', 'black'], APP, 5800, (c, s) => c === 'crimson' && s === '3XL') }),
-      P({ id: 'wildpaw-cap', sku: 'KC-CAP-001', name: 'Wildpaw Cap', category: 'headwear', sizeNoun: 'Fit',
-        blurb: 'Washed black cap with an embroidered paw and three red claw marks.',
-        gallery: [ph(A.cap, '50% 50%'), ph(A.cap, '30% 35%', 1.8)],
-        ...build(['black', 'charcoal', 'bone'], ['One size'], 2600) }),
-      P({ id: 'howl-moon-mug', sku: 'KC-MUG-001', name: 'Howl Moon Mug', category: 'drinkware',
-        blurb: 'Black mug with the wolf and moon wrapped around it.',
-        gallery: [art('mountain')],
-        ...build(['black'], ['11 oz', '15 oz'], 1800, null, (l) => (l === '15 oz' ? 2200 : 1800)) }),
-      P({ id: 'blood-moon-tumbler', sku: 'KC-TUM-001', name: 'Blood Moon Tumbler', category: 'drinkware',
-        blurb: 'Insulated tumbler for the long walk home, red moon on black.',
-        gallery: [art('crest')], ...build(['black'], ['20 oz'], 3200) }),
-      P({ id: 'claw-desk-mat', sku: 'KC-MAT-001', name: 'Claw Desk Mat', category: 'desk-gear',
-        blurb: 'Full-width desk mat with red claw slashes across black.',
-        gallery: [art('claw')], ...build(['black'], ['Large'], 3400) }),
-      P({ id: 'wildpaw-mousepad', sku: 'KC-PAD-001', name: 'Wildpaw Mousepad', category: 'desk-gear',
-        blurb: 'The paw mark on a dark, grippy surface.',
-        gallery: [art('paw')], ...build(['black'], ['Standard'], 2200) }),
-      P({ id: 'crest-sticker-pack', sku: 'KC-STK-001', name: 'Wolf Crest Sticker Pack', category: 'stickers', sizeNoun: 'Pack',
-        blurb: 'Wolf crest decals for laptops, lockers and anything else that stands still.',
-        gallery: [art('crest')], ...build(['black'], ['Standard pack'], 1200) }),
-      P({ id: 'claw-slash-decal', sku: 'KC-STK-002', name: 'Claw Slash Decal', category: 'stickers', sizeNoun: 'Pack',
-        blurb: 'Three red slashes. Peel, stick, leave a mark.',
-        gallery: [art('claw')], ...build(['black'], ['Single decal'], 800) })
-    ].map((p) => Object.assign(p, { policies: { shipping: 'Standard 5-8 business days', returns: '30-day returns, unworn and unwashed', quality: 'Premium print and materials built to last' } }));
+      C({ id: 'baseball-jersey', sku: 'KC-JER-001', name: 'Baseball Jersey', category: 'jersey', price: 8500, imgs: ['baseball-jersey', 'baseball-jersey-back'],
+        blurb: 'Our flagship piece: a button-front baseball jersey with all-over sublimation. Custom name, number, colors and patches based on your fursona. 100% polyester, tagless interior, machine washable cold.' }),
+      C({ id: 'hockey-jersey', sku: 'KC-JER-002', name: 'Hockey Jersey', category: 'jersey', price: 9500,
+        blurb: 'Full sublimation hockey-cut jersey with a traditional lace-up collar. Custom name and number, shoulder patches, color-blocked yoke and side striping.' }),
+      C({ id: 'basketball-jersey', sku: 'KC-JER-003', name: 'Basketball Jersey', category: 'jersey', price: 7500,
+        blurb: 'Sleeveless V-neck mesh jersey with a custom name, number and side panel design. Pairs with the matching athletic shorts.' }),
+      C({ id: 'football-jersey', sku: 'KC-JER-004', name: 'Football Jersey', category: 'jersey', price: 8500, tag: 'New',
+        blurb: 'Loose, oversized all-over sublimation mesh football jersey with a V-neck and side racing stripes. Runs big by design, so check the size chart.' }),
+      C({ id: 'unisex-tee', sku: 'KC-TOP-001', name: "Men's Crew Neck Tee", category: 'tops', price: 5000,
+        blurb: 'Premium combed-cotton crew neck with a full all-over print. Your fursona design covers the whole garment, front and back.' }),
+      C({ id: 'tank-top', sku: 'KC-TOP-002', name: 'Tank Top', category: 'tops', price: 4500,
+        blurb: 'Lightweight sublimation tank with an all-over design. Great for warm weather, conventions and athletic wear.' }),
+      C({ id: 'button-up', sku: 'KC-TOP-003', name: 'Button-Up Shirt', category: 'tops', price: 7000,
+        blurb: 'Short-sleeve button-up with all-over sublimation front and back. Put-together but still on-theme for furry events.' }),
+      C({ id: 'fursona-bar-tee', sku: 'KC-TOP-004', name: "Fursona Bar Men's Fitted T-Shirt", category: 'tops', price: 5000, tag: 'New', ready: false, noNote: true,
+        imgs: ['fursona-bar-tee', 'fursona-bar-tee-model'], colorIds: ['black', 'navy', 'royal', 'grey', 'white'],
+        blurb: 'A snugger, more tailored fitted tee with the Fursona Bar graphic screen-printed front and center. Pick your garment color and size. Fill in your fursona name, location name, bar type, animal type and est. date at checkout.' }),
+      FIT('pawtagonia-tee', 'KC-TOP-005', "Pawtagonia Men's Fitted T-Shirt"),
+      FIT('furrberry-tee', 'KC-TOP-006', "Furrberry Men's Fitted T-Shirt", '', ['black', 'cool-blue', 'graphite-black', 'navy']),
+      FIT('zerofox-tee', 'KC-TOP-007', 'Zero Fox Given Retro Fitted T-Shirt', '', ['black', 'navy']),
+      FIT('zerofox-90s-tee', 'KC-TOP-008', 'Zero Fox Given 90s Style Fitted T-Shirt', '', ['black', 'navy']),
+      C({ id: 'pullover-hoodie', sku: 'KC-OUT-001', name: 'Pullover Hoodie', category: 'outerwear', price: 8000, tag: 'Best Seller', imgs: ['pullover-hoodie', 'pullover-hoodie-back'],
+        blurb: 'Heavy recycled fleece pullover with a double-lined hood, kangaroo pocket and drawstrings in white or black, with a custom embroidered or sublimated design.' }),
+      C({ id: 'zip-hoodie', sku: 'KC-OUT-002', name: 'Unisex Zip Hoodie', category: 'outerwear', price: 9500, tag: 'New',
+        sizes: ['2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'], priceFor: (l) => ZIP[l],
+        blurb: 'All-over print zip hoodie with a relaxed drop-shoulder fit and a double-lined hood printed on both sides. Brushed fleece lining, premium zipper and a personalized inside label. Sizes 2XL and up are $105.' }),
+      C({ id: 'letterman-jacket', sku: 'KC-OUT-003', name: 'Heavyweight Letterman Jacket', category: 'outerwear', price: 11500, tag: 'New',
+        blurb: 'Heavyweight varsity jacket with contrast sleeves, ribbed knit trim and a snap-button front. Custom DTF print on the left chest, full back and both sleeves.' }),
+      C({ id: 'athletic-shorts', sku: 'KC-BOT-001', name: 'Athletic Shorts', category: 'bottoms', price: 6000,
+        blurb: 'Lightweight athletic shorts with custom side panel and waistband design, drawstring waist and side pockets. Match them with a jersey for a full set.' }),
+      C({ id: 'joggers', sku: 'KC-BOT-002', name: 'Wide-Leg Joggers', category: 'bottoms', price: 7500,
+        blurb: 'Relaxed wide-leg joggers with an all-over print, drawstring waist, side pockets and elastic cuffs.' }),
+      C({ id: 'track-pants', sku: 'KC-BOT-003', name: 'Track Pants', category: 'bottoms', price: 7000,
+        blurb: 'Athletic track pants with a custom side stripe, waistband design and your fursona color scheme. Pairs with a matching jersey.' }),
+      C({ id: 'boxers', sku: 'KC-UND-001', name: 'Boxer Briefs', category: 'underwear', price: 4000, tag: 'Best Seller', imgs: ['boxers', 'boxers-back'],
+        blurb: 'All-over print boxer briefs in a soft polyester-spandex blend with 4-way stretch and a branded waistband.' }),
+      C({ id: 'high-top-shoes', sku: 'KC-FOO-001', name: "Men's High-Top Canvas Shoes", category: 'footwear', price: 9500, sizeNoun: 'US size',
+        sizes: ['5', '6', '7', '8', '9', '10', '11', '12', '13'],
+        blurb: 'High-top canvas shoes with all-over sublimation across the inner and outer panels and the tongue. White rubber sole, metal eyelets and white laces.' }),
+      C({ id: 'snapback', sku: 'KC-HEA-001', name: 'Snapback Cap', category: 'headwear', price: 4500, sizeNoun: 'Fit', sizes: ['One size'],
+        blurb: 'Structured flat-brim snapback with a custom embroidered front panel featuring your fursona icon, initials or logo.' }),
+      C({ id: 'iphone-case', sku: 'KC-ACC-001', name: 'MagSafe iPhone Case', category: 'accessories', price: 4500, sizeNoun: 'Fits', sizes: ['iPhone 13 to 16 series'],
+        blurb: 'Dual-layer tough case with MagSafe, a full sublimation print and a raised camera bezel.' }),
+      C({ id: 'samsung-case', sku: 'KC-ACC-002', name: 'Samsung Tough Case', category: 'accessories', price: 4000, sizeNoun: 'Fits', sizes: ['Most Galaxy models'],
+        blurb: 'Dual-layer tough Samsung case with a full custom print and precise cutouts.' }),
+      C({ id: 'tote', sku: 'KC-ACC-003', name: 'Tote Bag', category: 'accessories', price: 4000, sizes: ['15 x 16 in'],
+        blurb: 'Heavy-duty natural cotton tote with a custom full-color print. Built for meets, conventions and grocery runs.' }),
+      C({ id: 'patch', sku: 'KC-ACC-004', name: 'Embroidered Patch', category: 'accessories', price: 2500, sizes: ['Up to 4 in'],
+        blurb: 'Custom embroidered patch in up to 8 colors, with iron-on or sew-on backing.' }),
+      C({ id: 'bandana', sku: 'KC-ACC-005', name: 'Bandana', category: 'accessories', price: 3000, sizes: ['22 x 22 in'],
+        blurb: 'Soft satin bandana with an all-over custom print. Wear it as a headwrap, neck wrap or wrist tie.' }),
+      C({ id: 'pin-buttons', sku: 'KC-ACC-006', name: 'Pin Buttons', category: 'accessories', price: 2000, sizeNoun: 'Pack', sizes: ['Set of 3'],
+        blurb: 'Set of 3 custom full-color pin buttons in a mix of sizes, for bags, lanyards and trading at cons.' }),
+      C({ id: 'neck-gaiter', sku: 'KC-ACC-007', name: 'Neck Gaiter', category: 'accessories', price: 3000, sizes: ['One size'],
+        blurb: 'Stretchy all-over print gaiter. Wear it as a face covering, headband or neck warmer.' }),
+      C({ id: 'tumbler', sku: 'KC-DRK-001', name: 'Skinny Tumbler', category: 'drinkware', price: 4500, sizes: ['20 oz'],
+        blurb: '20 oz stainless steel insulated tumbler with lid and metal straw, with a full wrap custom print. Hand wash recommended.' }),
+      C({ id: 'travel-mug', sku: 'KC-DRK-002', name: 'Travel Mug', category: 'drinkware', price: 4500, sizes: ['25 oz'],
+        blurb: '25 oz insulated stainless travel mug with a handle and clear sip lid, in your custom print. Hand wash recommended.' }),
+      C({ id: 'sherpa-blanket', sku: 'KC-HOM-001', name: 'Sublimated Sherpa Blanket', category: 'home', price: 5500, tag: 'New',
+        sizes: ['Throw', 'Large Throw', 'XL Throw'], priceFor: (l) => BLANKET[l],
+        blurb: 'Velvety microfiber top with a full-color all-over sublimation print and plush white sherpa on the back. Throw 37 x 57 in, Large 50 x 60 in, XL 60 x 80 in.' }),
+      C({ id: 'pet-collar', sku: 'KC-PET-001', name: 'Pet Collar (Wink Wink)', category: 'pets', price: 3000, tag: 'Top Tier', imgs: ['pet-collar', 'pet-collar-back'],
+        sizes: ['S', 'M', 'L'],
+        blurb: 'Officially, a custom-printed adjustable collar for your real-life pet, with black lining, an adjustable metal buckle and a D-ring. Unofficially: we know our audience, and Kokuro does not judge.' }),
+      poster('poster-make-fur-not-war', 'poster-fur-not-war', 'Make Fur, Not War – Psychedelic Fox Poster', 'A charismatic fox among flowing psychedelic lettering and flowers in a late-1960s-inspired furry design.'),
+      poster('poster-i-want-you', 'poster-want-you', 'I Want You Poster', 'A classic recruitment-poster pose reimagined for the furry fandom.'),
+      poster('poster-furries-unite', 'poster-unite', 'Furries of the World Unite Poster', 'A rallying call for the fandom in bold vintage poster style.'),
+      poster('poster-we-can-do-it', 'poster-we-can', 'We Can Do It Poster', 'A wartime-poster classic with a furry twist.'),
+      poster('poster-future-has-fur', 'poster-future', 'The Future Has Fur Poster', 'An optimistic, retro-futurist vision of the fandom.'),
+      poster('poster-wilder-world', 'poster-wilder', 'A Wilder World Awaits Poster', 'A wild, adventurous scene for the fandom.'),
+      (() => { // full poster shown uncropped on a matching dark ground (headline sits at the top edge)
+        const p = poster('poster-gta-vi-furry-ban', 'poster-gta-furry-ban', 'GTA VI Furry Ban Poster', 'A black-and-white protest poster: fifteen cop cars, one foam tail. "Repeal Leonida\'s Furry Ban."');
+        const fix = (m) => Object.assign({}, m, { fit: 'contain', bg: '#0b0603' });
+        return Object.assign(p, { media: fix(p.media), gallery: p.gallery.map(fix) });
+      })()
+    ].sort((a, b) => (b.ready ? 1 : 0) - (a.ready ? 1 : 0)); // ready-made first (stable), so "Featured" leads with them
   }
 
   money(c) { return '$' + (c / 100).toFixed(2); }
@@ -301,8 +464,8 @@ class Component extends DCLogic {
     // ---- view models -------------------------------------------------
     const minPrice = (p) => Math.min.apply(null, p.variants.map((v) => v.priceCents));
     const mediaVM = (m) => (m.kind === 'photo'
-      ? { hasPhoto: true, image: m.src, imagePos: m.pos, zoom: m.zoom || 1, artUrl: '' }
-      : { hasPhoto: false, image: '', imagePos: '50% 50%', zoom: 1, artUrl: A[m.art] });
+      ? { hasPhoto: true, image: m.src, imagePos: m.pos, zoom: m.zoom || 1, artUrl: '', fit: m.fit || 'cover', bg: m.bg || 'var(--k-surface-2)' }
+      : { hasPhoto: false, image: '', imagePos: '50% 50%', zoom: 1, artUrl: A[m.art], fit: 'cover', bg: 'var(--k-surface-2)' });
     const toCard = (p) => {
       const prices = p.variants.map((v) => v.priceCents);
       const min = Math.min.apply(null, prices);
@@ -311,7 +474,7 @@ class Component extends DCLogic {
       return Object.assign({
         id: p.id, name: p.name, categoryLabel: p.categoryLabel, tag: p.tag,
         priceLabel: (varies ? 'From ' : '') + money(min),
-        swatches: p.colors.slice(0, 4).map((c) => ({ hex: c.hex, label: c.label })),
+        swatches: p.colors.length > 1 ? p.colors.slice(0, 5).map((c) => ({ hex: c.hex, label: c.label })) : [],
         sizeLabels: p.sizes.length > 6 ? p.sizes.slice(0, 6).map((z) => z.label) : p.sizes.map((z) => z.label),
         cta: quick ? 'Add +' : 'Options',
         open: () => openProduct(p.id),
@@ -319,18 +482,57 @@ class Component extends DCLogic {
       }, mediaVM(p.media));
     };
 
-    const catRows = [
-      { id: 'apparel', label: 'Apparel', sub: 'Tees, Hoodies & More', thumb: A.tee, photo: true },
-      { id: 'drinkware', label: 'Drinkware', sub: 'Mugs, Bottles & Tumblers', thumb: A.mountain, photo: false },
-      { id: 'desk-gear', label: 'Desk Gear', sub: 'Mousepads, Mats & More', thumb: A.claw, photo: false },
-      { id: 'stickers', label: 'Stickers', sub: 'Decals, Art & Collectibles', thumb: A.crest, photo: false }
-    ].map((c, i) => {
-      const n = s.products.filter((p) => p.group === c.id).length;
-      return { n: '0' + (i + 1), label: c.label, sub: c.sub, countLabel: n + (n === 1 ? ' piece' : ' pieces'),
-        hasPhoto: c.photo, noPhoto: !c.photo, image: c.photo ? c.thumb : '', artUrl: c.photo ? '' : c.thumb, select: goShop(c.id) };
-    });
+    const CAT_SUBS = {
+      ready: 'Fitted Tees & Posters. No commission needed',  /* ready-made only */ jersey: 'Baseball, Hockey, Basketball & Football', tops: 'Tees, Tanks, Button-Ups & the Bar Tee',
+      outerwear: 'Hoodies & Letterman Jackets', bottoms: 'Shorts, Joggers & Track Pants',
+      underwear: 'All-Over Print Boxer Briefs', footwear: 'High-Top Canvas Shoes', headwear: 'Snapback Caps',
+      accessories: 'Cases, Totes, Patches & More', drinkware: 'Tumblers & Travel Mugs',
+      home: 'Sherpa Blankets', pets: 'Custom Pet Collars'
+    };
+    const catRows = cats.map((c, i) => {
+      const inCat = s.products.filter((p) => p.group === c.id);
+      const n = inCat.length;
+      const first = inCat[0] && inCat[0].media;
+      const hasPhoto = !!(first && first.kind === 'photo');
+      return { n: (i + 1 < 10 ? '0' : '') + (i + 1), label: c.label, sub: CAT_SUBS[c.id] || '', countLabel: n + (n === 1 ? ' piece' : ' pieces'),
+        hasPhoto, noPhoto: !hasPhoto, image: hasPhoto ? first.src : '', artUrl: hasPhoto ? '' : A.crest, select: goShop(c.id) };
+    }).filter((r) => r.countLabel.charAt(0) !== '0');
 
-    const tiles = ['lone-wolf-tee', 'kokuro-hoodie', 'wildpaw-cap'].map((id) => byId[id]).filter(Boolean).map(toCard);
+    // ---- commission slip: pieces picked on the home rail, carried into the inquiry ----
+    const RAIL = [
+      ['baseball-jersey', 'Button-front. All-over print. Custom name, number and patches.'],
+      ['hockey-jersey', 'Lace-up collar. Shoulder patches, color-blocked yoke.'],
+      ['football-jersey', 'Oversized mesh. Side racing stripes. Runs big.'],
+      ['pullover-hoodie', 'Double-lined hood. Embroidered or sublimated.'],
+      ['zip-hoodie', 'All-over print. Hood printed on both sides.'],
+      ['letterman-jacket', 'Heavyweight. DTF print on chest, back and sleeves.'],
+      ['high-top-shoes', 'Canvas high-tops. All-over print, US 5 to 13.'],
+      ['snapback', 'Flat brim. Custom embroidered front panel.'],
+      ['sherpa-blanket', 'Print on top, sherpa underneath. Three sizes.'],
+      ['pet-collar', 'Black-lined, adjustable, D-ring. Sizes S to L.']
+    ];
+    const setSlip = (ids) => { this.setState({ slip: ids }); try { window.localStorage.setItem('kokuro.slip.v1', JSON.stringify(ids)); } catch (e) {} };
+    const toggleSlip = (id) => setSlip(s.slip.indexOf(id) >= 0 ? s.slip.filter((x) => x !== id) : s.slip.concat(id));
+    const rail = RAIL.map((r) => byId[r[0]] ? r : null).filter(Boolean).map((r) => {
+      const p = byId[r[0]]; const on = s.slip.indexOf(p.id) >= 0;
+      const m = p.media;
+      return { id: p.id, name: p.name, priceLabel: toCard(p).priceLabel, fact: r[1], on, btn: on ? 'On your slip' : 'Add to slip',
+        image: m.kind === 'photo' ? m.src : '', imagePos: m.pos || '50% 50%',
+        open: () => openProduct(p.id), toggle: () => toggleSlip(p.id) };
+    });
+    const slipProducts = s.slip.map((id) => byId[id]).filter(Boolean);
+    const slipModel = {
+      has: slipProducts.length > 0, empty: slipProducts.length === 0, count: slipProducts.length,
+      lines: slipProducts.map((p) => ({ name: p.name, priceLabel: toCard(p).priceLabel })),
+      depositNow: String(slipProducts.length * 25), depositLabel: money(slipProducts.length * 2500),
+      text: slipProducts.map((p) => p.name + ' (' + toCard(p).priceLabel + ')').join(', ')
+    };
+    const onCommission = () => go({ view: 'custom' });
+
+    // Home page ready-made strip: curated order. The Make Fur, Not War poster is deliberately left off the home page (still in the shop).
+    const HOME_READY = ['pawtagonia-tee', 'furrberry-tee', 'zerofox-tee', 'zerofox-90s-tee', 'poster-gta-vi-furry-ban', 'poster-i-want-you'];
+    const readyCards = HOME_READY.map((id) => byId[id]).filter(Boolean).map(toCard);
+    const tiles = ['baseball-jersey', 'pullover-hoodie', 'snapback'].map((id) => byId[id]).filter(Boolean).map(toCard);
 
     // shop filtering
     const matchesCat = (p) => s.category === 'all' || p.category === s.category || p.group === s.category;
@@ -349,13 +551,13 @@ class Component extends DCLogic {
     const results = list.map(toCard);
 
     const catHit = cats.find((c) => c.id === s.category);
-    const groupLabels = { apparel: 'Apparel', drinkware: 'Drinkware', 'desk-gear': 'Desk Gear', stickers: 'Stickers' };
+    const groupLabels = {};
     const catLabel = catHit ? catHit.label : (groupLabels[s.category] || '');
 
     const filtersActive = !!(s.color || s.size || s.maxPrice !== null || s.query);
     const clearFilters = () => this.setState({ category: 'all', query: '', color: '', size: '', maxPrice: null, sort: 'featured' });
     const allColors = [];
-    s.products.forEach((p) => p.colors.forEach((c) => { if (!allColors.some((x) => x.id === c.id)) allColors.push(c); }));
+    s.products.forEach((p) => p.colors.forEach((c) => { if (c.id !== 'custom' && !allColors.some((x) => x.id === c.id)) allColors.push(c); }));
     const filterModel = {
       categories: [{ id: 'all', label: 'All Products', group: '' }].concat(cats).map((c) => {
         const n = c.id === 'all' ? s.products.length : s.products.filter((p) => p.category === c.id).length;
@@ -377,7 +579,11 @@ class Component extends DCLogic {
       id: cur.id, name: cur.name, categoryLabel: cur.categoryLabel, tag: cur.tag, blurb: cur.blurb, sku: cur.sku,
       sizeNoun: cur.sizeNoun, colors: cur.colors, sizes: cur.sizes, policies: cur.policies,
       variants: cur.variants.map((v) => ({ id: v.id, colorId: v.colorId, sizeId: v.sizeId, priceCents: v.priceCents, priceLabel: money(v.priceCents), inStock: v.inStock })),
-      gallery: cur.gallery.map((g) => mediaVM(g))
+      gallery: cur.gallery.map((g) => mediaVM(g)),
+      details: cur.details || [],
+      sizeChart: (cur.sizeChart || []).map((r) => ({ size: r[0], length: r[1], width: r[2] })),
+      caption: cur.caption || '',
+      galleryByColor: cur.galleryByColor ? Object.keys(cur.galleryByColor).reduce((a, k) => { a[k] = cur.galleryByColor[k].map((g) => mediaVM(g)); return a; }, {}) : null
     }) : null;
     const relatedFor = (p) => s.products.filter((x) => p && x.id !== p.id && x.category === p.category)
       .concat(s.products.filter((x) => p && x.id !== p.id && x.category !== p.category)).slice(0, 4).map(toCard);
@@ -394,7 +600,7 @@ class Component extends DCLogic {
       subtotal += v.priceCents * l.qty; count += l.qty;
       cartLines.push(Object.assign({
         lineId: l.lineId, name: p.name, qty: l.qty,
-        variantLabel: 'Color: ' + (color ? color.label : '') + '  |  ' + p.sizeNoun + ': ' + (size ? size.label : ''),
+        variantLabel: (p.colors.length > 1 && color ? 'Color: ' + color.label + '  |  ' : '') + p.sizeNoun + ': ' + (size ? size.label : ''),
         unitLabel: money(v.priceCents) + ' each', totalLabel: money(v.priceCents * l.qty),
         notes: '', hasNotes: false, canDec: l.qty > 1,
         inc: () => this.commitCart(this.state.cart.map((x) => (x.lineId === l.lineId ? { ...x, qty: Math.min(99, x.qty + 1) } : x)), false),
@@ -410,6 +616,7 @@ class Component extends DCLogic {
     return {
       theme: s.theme,
       isFurry: s.theme === 'furry',
+      rail, slipModel, onCommission,
       isHumanHome: s.view === 'home' && s.theme !== 'furry',
       isFurryHome: s.view === 'home' && s.theme === 'furry',
       showFurryPrompt: s.view === 'home' && s.theme !== 'furry',
@@ -426,7 +633,7 @@ class Component extends DCLogic {
       query: s.query,
       onQuery: (e) => { this.setState({ query: e.target.value, view: 'shop', category: s.view === 'shop' ? s.category : 'all', productId: null }); if (s.view !== 'shop') this.toTop(); },
       // home
-      tiles, catRows,
+      tiles, catRows, readyCards, goReady: goShop('ready'),
       // shop
       bannerA: catLabel ? catLabel : 'Shop the', bannerB: catLabel ? '' : 'Collection',
       listTitle: q ? 'Results' : (catLabel || 'All products'),

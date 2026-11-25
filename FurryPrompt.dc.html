@@ -12,7 +12,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .kfp{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));width:min(340px,calc(100vw - 32px));font-family:var(--k-font-body);color:var(--k-ink)}
@@ -33,17 +33,29 @@ body{margin:0}
 @media (prefers-reduced-motion:reduce){.kfp-panel,.kfp-tab{animation:none}}
 .kfp-tab{animation-delay:0s}
 @media print{.kfp,.kfp-tab{display:none}}
+.kfp-row .k-btn,.kfp-tab,.kfp-x{min-height:44px;touch-action:manipulation}
+.kfp-x{min-width:44px;top:2px;right:2px}
+@media (max-width:520px){
+.kfp{left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));width:auto}
+.kfp-panel{padding:14px 14px 14px}
+.kfp-title{font-size:26px;margin-bottom:10px}
+.kfp-copy{font-size:12.5px;margin-bottom:12px;max-height:38vh;overflow:auto}
+.kfp-row{flex-direction:column}
+.kfp-row .k-btn{width:100%}
+.kfp-tab{right:12px;bottom:max(12px,env(safe-area-inset-bottom))}
+}
+@media (max-height:480px) and (orientation:landscape){.kfp{width:min(320px,50vw);left:auto}.kfp-copy{max-height:30vh}}
 </style>
 </helmet>
 <sc-if value="{{ showPanel }}" hint-placeholder-val="{{ true }}">
 <aside class="kfp" role="complementary" aria-label="Secret" onKeyDown="{{ onKey }}">
 <div class="kfp-panel">
-<button class="kfp-x" onClick="{{ dismiss }}" aria-label="Dismiss">✕</button>
+<button class="kfp-x" onClick="{{ dismiss }}" aria-label="Dismiss">&#10005;</button>
 <sc-if value="{{ isPrompt }}" hint-placeholder-val="{{ true }}">
 <p class="kfp-eyebrow">Off the map</p>
 <h2 class="kfp-title">Psst... are you a furry?</h2>
 <div class="kfp-row">
-<button class="k-btn k-btn--sm" onClick="{{ enter }}" disabled="{{ busy }}"><span>Obviously. 🐺</span></button>
+<button class="k-btn k-btn--sm" onClick="{{ enter }}" disabled="{{ busy }}"><span>Obviously. &#128058;</span></button>
 <button class="k-btn k-btn--sm k-btn--ghost" onClick="{{ explain }}"><span>What's a furry?</span></button>
 </div>
 </sc-if>
@@ -52,7 +64,7 @@ body{margin:0}
 <h2 class="kfp-title">Fur, tails &amp; fandom</h2>
 <p class="kfp-copy">A furry is someone into anthropomorphic animal characters: wolves who wear hoodies, foxes with opinions, dragons with excellent taste in merch. Many of them draw, write, collect, or build a character of their own, and then wear it. Harmless, creative, and very into tails.</p>
 <div class="kfp-row">
-<button class="k-btn k-btn--sm" onClick="{{ enter }}" disabled="{{ busy }}"><span>Sounds like me. 🐺</span></button>
+<button class="k-btn k-btn--sm" onClick="{{ enter }}" disabled="{{ busy }}"><span>Sounds like me. &#128058;</span></button>
 <button class="k-btn k-btn--sm k-btn--ghost" onClick="{{ dismiss }}"><span>Not for me</span></button>
 </div>
 </sc-if>
@@ -78,14 +90,16 @@ class Component extends DCLogic {
     const vis = this.props.visible !== false && this.props.visible !== 'false';
     const s = this.state;
     const dismissed = this.isDismissed();
+    // Props can arrive as strings ("false" is truthy), so compare explicitly.
+    const isBusy = () => this.props.busy === true || this.props.busy === 'true';
     return {
       showPanel: vis && !dismissed,
       showTab: vis && dismissed,
       isPrompt: s.phase === 'prompt',
       isExplain: s.phase === 'explain',
-      busy: !!this.props.busy,
+      busy: isBusy(),
       explain: () => this.setState({ phase: 'explain' }),
-      enter: () => { if (!this.props.busy && this.props.onEnter) this.props.onEnter(); },
+      enter: () => { if (!isBusy() && typeof this.props.onEnter === 'function') this.props.onEnter(); },
       dismiss: () => {
         try { sessionStorage.setItem('kokuro.furryPrompt.dismissed', '1'); } catch (e) {}
         this.setState({ dismissed: true, phase: 'prompt' });

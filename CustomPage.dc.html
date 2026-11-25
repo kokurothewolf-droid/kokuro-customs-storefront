@@ -12,7 +12,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@900&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .cp{color:var(--k-ink);font-family:var(--k-font-body)}
@@ -44,6 +44,11 @@ body{margin:0}
 .cp-ex .fr .k-art img{width:62%;height:62%}
 .cp-ex .fr i{position:absolute;right:8%;bottom:6%;font:700 10px var(--k-font-body);font-style:normal;letter-spacing:.18em;text-transform:uppercase;color:var(--k-ink-dim)}
 .cp-ex figcaption{margin-top:10px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--k-ink-dim)}
+.cp-slip{margin:0 0 24px;padding:20px 22px;background:var(--k-cream);color:var(--k-on-cream);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+.cp-slip h3{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--k-accent-on-light)}
+.cp-slip ul{margin:0;padding:0;list-style:none;border-top:2px solid var(--k-on-cream)}
+.cp-slip li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #cfc9bf;font-size:14px;font-weight:700}
+.cp-slip p{margin:10px 0 0;font-size:13px;font-weight:700}
 .cp-ex-note{margin:14px 0 0;font-size:12px;color:var(--k-muted)}
 .cp-feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:18px;margin-top:34px;padding-top:26px;border-top:1px solid var(--k-line-strong)}
 .cp-feat{display:flex;align-items:center;gap:12px}
@@ -72,15 +77,15 @@ body{margin:0}
 </helmet>
 <div class="cp k-root" style="min-height: 0">
 <section class="cp-hero" aria-labelledby="cp-h1">
-<img class="bg" data-k-parallax="0.1" data-k-parallax-cover="" src="./assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="" width="1672" height="941">
+<img class="bg" data-k-parallax="0.1" data-k-parallax-cover src="./assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="" width="1672" height="941">
 <div class="cp-scrim"></div>
 <img class="cp-claw" data-k-parallax="-0.25" data-k-reveal="slash" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
 <div class="cp-in">
 <p class="cp-kanji" data-k-reveal="fade" data-k-delay="0.3" lang="ja" aria-hidden="true">黒狼</p>
 <div>
 <h1 id="cp-h1" class="k-display cp-h1"><span class="cp-l"><span data-k-reveal="line">Custom</span></span><span class="cp-l"><span data-k-reveal="line" data-k-delay="0.12"><span class="k-red">Prints</span></span></span></h1>
-<p class="cp-sub" data-k-reveal="rise" data-k-delay="0.35">Turn your artwork into wearable gear.</p>
-<button class="k-btn" data-k-magnetic="0.18" data-k-reveal="rise" data-k-delay="0.5" onClick="{{ toForm }}"><span>Start a custom print inquiry <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
+<p class="cp-sub" data-k-reveal="rise" data-k-delay="0.35">Fully custom gear built around your fursona.</p>
+<button class="k-btn" data-k-magnetic="0.18" data-k-reveal="rise" data-k-delay="0.5" onClick="{{ toForm }}"><span>Start a custom print inquiry <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></button>
 </div>
 </div>
 </section>
@@ -90,7 +95,7 @@ body{margin:0}
 <h2 id="cp-ph" class="k-display cp-ph" data-k-reveal="rise">The<br>Process</h2>
 <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
 <div class="cp-step" data-k-reveal="rise">
-<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ s.icon }}"></path></svg>
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ s.icon }}"/></svg>
 <div><span class="cp-n">{{ s.n }}</span><span class="cp-st">{{ s.title }}</span><p class="cp-sd">{{ s.text }}</p></div>
 </div>
 </sc-for>
@@ -102,39 +107,40 @@ body{margin:0}
 <h2 id="cp-ex-h" class="k-display cp-ex-h" data-k-reveal="rise">Custom print examples <img src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></h2>
 <div class="cp-ex">
 <sc-for list="{{ examples }}" as="e" hint-placeholder-count="3">
-<figure><div class="fr"><div class="k-art" data-k-reveal="slash" role="img" aria-label="{{ e.label }} concept art"><img src="{{ e.artUrl }}" alt=""></div><i>Concept</i></div><figcaption data-k-reveal="rise">{{ e.label }}</figcaption></figure>
+<figure><div class="fr"><div class="k-art" data-k-reveal="slash" role="img" aria-label="{{ e.label }} mockup"><img src="{{ e.artUrl }}" alt=""></div><i>Mockup</i></div><figcaption data-k-reveal="rise">{{ e.label }}</figcaption></figure>
 </sc-for>
 </div>
-<p class="cp-ex-note">Placeholder examples. Replace with real customer work and print-partner mockups.</p>
+<p class="cp-ex-note">Print-partner mockups showing the kind of piece we build around your ref sheet.</p>
 <div class="cp-feats">
 <sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
-<div class="cp-feat" data-k-reveal="rise"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ f.icon }}"></path></svg><div><b>{{ f.title }}</b><span>{{ f.text }}</span></div></div>
+<div class="cp-feat" data-k-reveal="rise"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ f.icon }}"/></svg><div><b>{{ f.title }}</b><span>{{ f.text }}</span></div></div>
 </sc-for>
 </div>
 </section>
 <section id="cp-form" class="k-anchor" data-k-reveal="rise" aria-label="Inquiry form">
-<dc-import name="InquiryForm" product-types="{{ productTypes }}" on-submit="{{ onInquiry }}" hint-size="100%,900px"></dc-import>
+<sc-if value="{{ slip.has }}" hint-placeholder-val="{{ false }}"><div class="cp-slip"><h3>Your commission slip</h3><ul><sc-for list="{{ slip.lines }}" as="l" hint-placeholder-count="2"><li><span>{{ l.name }}</span><span>{{ l.priceLabel }}</span></li></sc-for></ul><p>Design deposit due: {{ slip.depositLabel }} ($25 per piece, non-refundable)</p></div></sc-if>
+<dc-import name="InquiryForm" slip-text="{{ slipText }}" product-types="{{ productTypes }}" on-submit="{{ onInquiry }}" hint-size="100%,900px"></dc-import>
 </section>
 </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"onInquiry":{"editor":null},"$preview":{"width":1440,"height":3000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"onInquiry":{"editor":null},"slip":{"editor":null},"$preview":{"width":1440,"height":3000}}'>
 class Component extends DCLogic {
   // Page copy lives here as data so it can move to a CMS or the backend later.
-  // All of it is demo copy from the design mockups, not confirmed business facts.
+  // Process and pricing copy comes from the original Kokuro Customs store (Business Summary.md).
   content() {
     return {
       steps: [
-        { n: '01', title: 'Tell us your idea', text: 'Share your artwork, concept or vision.', icon: 'M4 20l1-4L17 4l3 3L8 19zM14 7l3 3' },
-        { n: '02', title: 'We review & plan', text: 'We confirm details, options and pricing.', icon: 'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6M8.5 9.5h.01' },
-        { n: '03', title: 'We create your gear', text: 'Your design is printed on premium apparel.', icon: 'M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z' },
-        { n: '04', title: 'You wear it', text: 'Custom gear, made just for you.', icon: 'M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9' }
+        { n: '01', title: 'Browse & build your cart', text: 'Pick your items and sizes. Jerseys and the bar tee take custom details.', icon: 'M4 20l1-4L17 4l3 3L8 19zM14 7l3 3' },
+        { n: '02', title: 'Pay the $25 design deposit', text: 'Non-refundable, per item. Upload your ref sheet and fursona details.', icon: 'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6M8.5 9.5h.01' },
+        { n: '03', title: 'Approve your mockup', text: 'Two free revision rounds. Extra revisions are $10 each.', icon: 'M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z' },
+        { n: '04', title: 'Pay the balance & we ship', text: 'Nothing prints until you approve. Ships internationally.', icon: 'M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9' }
       ],
       features: [
-        { title: 'Apparel', text: 'Tees, Hoodies & More', icon: 'M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z' },
-        { title: 'Accessories', text: 'Caps, Bags & More', icon: 'M3 16c0-5 4-9 9-9s9 4 9 9H3zM3 16c0 2 4 3 9 3s9-1 9-3' },
-        { title: 'Multiple styles', text: 'DTG, DTF & Embroidery', icon: 'M12 3 3 8l9 5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5' },
-        { title: 'Premium quality', text: 'Vibrant, Durable Prints', icon: 'M6 3h12l4 6-10 12L2 9zM2 9h20M9 3l3 6 3-6' }
+        { title: 'Apparel', text: 'Jerseys, Hoodies & More', icon: 'M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z' },
+        { title: 'Accessories', text: 'Cases, Totes, Patches & More', icon: 'M3 16c0-5 4-9 9-9s9 4 9 9H3zM3 16c0 2 4 3 9 3s9-1 9-3' },
+        { title: 'Multiple styles', text: 'Sublimation, DTF & Embroidery', icon: 'M12 3 3 8l9 5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5' },
+        { title: 'Approval first', text: 'You never pay for unseen work', icon: 'M6 3h12l4 6-10 12L2 9zM2 9h20M9 3l3 6 3-6' }
       ]
     };
   }
@@ -144,11 +150,13 @@ class Component extends DCLogic {
     return {
       steps: c.steps, features: c.features,
       examples: [
-        { label: 'Mountain & moon tee', artUrl: A.mountain },
-        { label: 'Crest back print', artUrl: A.crest },
-        { label: 'Paw embroidery cap', artUrl: A.paw }
+        { label: 'Baseball jersey', artUrl: './assets/60b5bd7810c706ec98bd67403247f20b.jpg' },
+        { label: 'Pullover hoodie', artUrl: './assets/f0ba175c459af73e419bef2375d510b4.jpg' },
+        { label: 'High-top canvas shoes', artUrl: './assets/212aeffc03ef26c899d56bb6199a5840.jpg' }
       ],
-      productTypes: ['Tee', 'Hoodie', 'Cap', 'Mug or tumbler', 'Desk mat or mousepad', 'Stickers or decals', 'Something else'],
+      productTypes: ['Jersey', 'Tee or tank', 'Hoodie or jacket', 'Bottoms', 'Boxer briefs', 'High-top shoes', 'Snapback cap', 'Phone case, tote, patch or pins', 'Tumbler or travel mug', 'Sherpa blanket', 'Pet collar', 'Something else'],
+      slip: this.props.slip || { has: false, lines: [], depositLabel: '$0.00', text: '' },
+      slipText: (this.props.slip && this.props.slip.text) || '',
       onInquiry: this.props.onInquiry || (() => Promise.resolve({ ok: true })),
       toForm: () => { try { const el = document.getElementById('cp-form'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }
     };

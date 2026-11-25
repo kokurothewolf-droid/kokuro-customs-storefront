@@ -7,44 +7,105 @@
 <script src="./_runtime/react-dom.js"></script>
 <script src="./_runtime/support.js"></script>
 <link rel="stylesheet" href="./theme/human.css">
+<script src="./motion/scroll-acts.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;family=Noto+Serif+JP:wght@900&amp;family=Permanent+Marker&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@900&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-.kh-page{color:var(--k-ink);font-family:var(--k-font-body)}
-/* hero */
-.hp-hero{position:relative;min-height:720px;display:flex;align-items:center;overflow:hidden;isolation:isolate;background:var(--k-bg)}
-.hp-hero-d{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% 18%;z-index:-3}
-.hp-hero-m{display:none}
-.hp-scrim{position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(11,11,11,.94) 0%,rgba(11,11,11,.72) 32%,rgba(11,11,11,0) 64%)}
-.hp-claw{position:absolute;left:-60px;bottom:-40px;width:440px;z-index:-1;transform:rotate(-6deg)}
-.hp-hero-in{width:100%;max-width:var(--k-max);margin:0 auto;padding:80px var(--k-gutter) 120px}
-.hp-h1{margin:0;font-size:clamp(72px,11vw,168px);line-height:.82;text-shadow:0 3px 0 rgba(0,0,0,.35)}
-.hp-h1 .l{display:block;overflow:hidden;padding:.04em .1em .02em 0;margin-right:-.1em}
-.hp-h1 .in{display:block}
-.hp-cta{margin-top:44px}
-.hp-tag{display:flex;align-items:center;gap:14px;margin-top:30px;font-size:12px;font-weight:700;letter-spacing:.38em;text-transform:uppercase}
-.hp-tag img{height:26px;width:auto}
-/* collection */
-.hp-cream{position:relative;z-index:2;background:var(--k-cream);color:var(--k-on-cream);margin-top:-40px;padding:120px 0 104px;clip-path:polygon(0 40px,36% 40px,38.5% 0,100% 0,100% 100%,0 100%)}
-.hp-coll{display:grid;grid-template-columns:minmax(260px,.62fr) minmax(0,2fr);gap:56px;align-items:end}
-.hp-h2{margin:16px 0 0;font-size:clamp(64px,8.2vw,124px);line-height:.84}
-.hp-brush{width:min(340px,80%);height:auto;margin:14px 0 26px}
-.hp-lede{margin:0 0 28px;max-width:34ch;font-size:16px;line-height:1.6;font-weight:500}
-.hp-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
-.hp-tile{display:block;width:100%;padding:0;border:0;background:none;text-align:left;color:var(--k-on-cream)}
-.hp-tile:nth-child(2){margin-top:44px}
-.hp-frame{overflow:hidden;clip-path:polygon(10% 0,100% 0,90% 100%,0 100%);background:var(--k-surface)}
-.hp-frame img{width:100%;aspect-ratio:3/4;object-fit:cover;transition:transform .5s ease}
-.hp-tile:hover .hp-frame img{transform:scale(1.06)}
-.hp-cap{display:flex;align-items:center;gap:10px;margin-top:14px;font-family:var(--k-font-display);font-style:italic;font-size:26px;letter-spacing:.03em;text-transform:uppercase}
-.hp-cap i{display:block;width:3px;height:22px;background:var(--k-accent);transform:skewX(-18deg)}
-.hp-cap em{margin-left:auto;font-family:var(--k-font-body);font-style:normal;font-size:14px;font-weight:700}
-/* categories */
+.hp{--hh:70px;color:var(--k-ink);font-family:var(--k-font-body);background:var(--k-bg)}
+@media (max-width:900px){.hp{--hh:62px}}
+.hp *{box-sizing:border-box}
+.hp button:focus-visible{outline:3px solid var(--k-accent-text);outline-offset:3px}
+
+/* ---- acts: static by default, pinned only when scroll-acts.js sets html.sc-on ---- */
+.hp [data-act]{position:relative}
+.hp .st{position:relative;overflow:hidden}
+:root.sc-on .hp [data-act="pin"],:root.sc-on .hp [data-act="pan"]{height:calc(var(--span,2) * 100svh)}
+:root.sc-on .hp [data-act="pin"] .st,:root.sc-on .hp [data-act="pan"] .st{position:sticky;top:var(--hh);height:calc(100svh - var(--hh))}
+.hp [data-cue]{opacity:var(--c,1);transform:translate3d(0,calc((1 - var(--c,1)) * 24px),0)}
+
+/* ---- 1 hero: layered planes ---- */
+.hp-hero .st{display:grid;align-items:end;min-height:min(86svh,820px);background:var(--k-bg);isolation:isolate}
+.hp-pl{position:absolute;inset:-6% -4% -22% -4%;pointer-events:none;
+ transform:translate3d(calc(var(--mx,0) * var(--d,0) * 28px),calc(var(--p,0) * var(--d,0) * -140px + var(--my,0) * var(--d,0) * 18px),0)}
+:root:not(.sc-on) .hp-pl{transform:none}
+.hp-pl--far{z-index:-4}
+.hp-pl--far img{position:absolute;right:0;top:4%;width:76%;height:96%;object-fit:cover;object-position:72% 18%;
+ -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 46%);mask-image:linear-gradient(90deg,transparent 0,#000 46%)}
+.hp-pl--far .m{display:none}
+.hp-pl--mid{z-index:-3;display:grid;place-items:center start;padding-left:3%}
+.hp-kj{font-family:var(--k-font-jp);font-weight:900;font-size:min(62vh,38vw);line-height:.9;letter-spacing:.02em;color:var(--k-accent);opacity:.14;writing-mode:vertical-rl;margin:0}
+.hp-pl--claw{z-index:-2}
+.hp-pl--claw img{position:absolute;left:-2%;bottom:14%;width:min(34vw,420px);transform:rotate(-8deg)}
+.hp-pl--near{z-index:-1}
+.hp-pl--near i{position:absolute;right:12%;bottom:30%;width:2px;height:62%;background:var(--k-accent);transform:rotate(24deg);transform-origin:bottom;opacity:.85}
+.hp-type{position:relative;z-index:5;padding:0 var(--k-gutter) clamp(2.5rem,9vh,6rem);max-width:var(--k-max);margin:0 auto;width:100%}
+.hp-h1{margin:0;font-size:clamp(72px,11vw,168px);line-height:.84;text-shadow:0 3px 0 rgba(0,0,0,.35)}
+.hp-h1 .l{display:block}
+.hp-sub{margin:22px 0 0;max-width:30ch;font-size:clamp(15px,1.4vw,18px);line-height:1.55;font-weight:600;color:var(--k-ink-soft)}
+.hp-cta{display:flex;align-items:center;flex-wrap:wrap;gap:12px 24px;margin-top:30px}
+.hp-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;background:none;border:0;font:700 13px var(--k-font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--k-ink);text-decoration:underline;text-decoration-color:var(--k-accent);text-decoration-thickness:3px;text-underline-offset:6px}
+.hp-link:hover{color:var(--k-accent-text)}
+
+/* ---- 1b ready-made ---- */
+.hp-ready{padding:clamp(56px,9vw,112px) 0;background:var(--k-surface-2);border-top:1px solid var(--k-line);border-bottom:1px solid var(--k-line)}
+.hp-ready-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px 40px;margin-bottom:36px}
+.hp-ready-head h2{margin:0;font-size:clamp(56px,8vw,120px);line-height:.86}
+.hp-ready-head p{margin:0;max-width:34ch;font-size:15px;line-height:1.6;font-weight:500;color:var(--k-ink-soft)}
+.hp-ready-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(220px,46%),1fr));gap:22px}
+.hp-rc{display:flex;flex-direction:column;gap:6px;padding:0;background:none;border:0;text-align:left;color:var(--k-ink);cursor:pointer}
+.hp-rm{display:block;aspect-ratio:4/5;overflow:hidden;background:var(--k-surface);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+.hp-rm img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--k-m-ease)}
+.hp-rc:hover .hp-rm img{transform:scale(1.04)}
+.hp-rn{margin-top:8px;font-family:var(--k-font-display);font-style:italic;font-size:24px;line-height:1.05;letter-spacing:.03em;text-transform:uppercase}
+.hp-rp{font-size:15px;font-weight:700}
+.hp-rc:focus-visible{outline:3px solid var(--k-accent-text);outline-offset:4px}
+@media (max-width:560px){.hp-ready-grid{gap:16px 12px}.hp-rn{font-size:20px}.hp-ready-head h2{font-size:clamp(48px,16vw,72px)}}
+
+/* ---- 2 quiet: type on space, authored silence ---- */
+.hp-quiet{min-height:100svh;display:grid;place-items:center;padding:var(--k-gutter);background:var(--k-bg)}
+.hp-quiet-in{max-width:var(--k-max);width:100%}
+.hp-q1{margin:0;font-size:clamp(64px,13vw,200px);line-height:.84;clip-path:inset(0 calc((1 - var(--c,1)) * 100%) 0 0)}
+.hp-q1 em{font-style:inherit;color:var(--k-accent)}
+.hp-q2{margin:28px 0 0;max-width:40ch;font-size:clamp(16px,1.6vw,20px);line-height:1.6;font-weight:500;color:var(--k-ink-soft)}
+:root:not(.sc-on) .hp-q1{clip-path:none}
+
+/* ---- 3 range: the peak. Lateral rail, one label schema per plate ---- */
+.hp-range{background-color:var(--k-surface-2);background-image:var(--k-texture);background-size:480px 320px;border-top:1px solid var(--k-line);border-bottom:1px solid var(--k-line)}
+.hp-range .st{display:flex;align-items:center}
+.hp-rail{position:relative;display:flex;align-items:center;gap:clamp(20px,3vw,44px);padding:0 var(--k-gutter);width:max-content;will-change:transform}
+:root:not(.sc-on) .hp-rail{width:100%;flex-wrap:wrap;padding-block:72px}
+.hp-lead{flex:none;width:min(28rem,82vw)}
+.hp-lead h2{margin:0;font-size:clamp(64px,8vw,120px);line-height:.84}
+.hp-lead p{margin:18px 0 0;max-width:34ch;font-size:15px;line-height:1.6;font-weight:500;color:var(--k-ink-soft)}
+.hp-plate{flex:none;width:min(21rem,74vw)}
+.hp-media{position:relative;display:block;width:100%;padding:0;border:0;background:var(--k-surface);overflow:hidden;aspect-ratio:4/5;clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%)}
+.hp-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--k-m-ease)}
+.hp-plate:hover .hp-media img{transform:scale(1.04)}
+.hp-label{padding:14px 2px 0}
+.hp-label h3{margin:0;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase}
+.hp-price{margin:6px 0 0;font-size:15px;font-weight:700}
+.hp-fact{margin:4px 0 0;min-height:3em;font-size:13px;line-height:1.5;font-weight:500;color:var(--k-ink-dim)}
+.hp-pick{display:inline-flex;align-items:center;gap:10px;min-height:44px;margin-top:12px;padding:0 16px;background:transparent;border:1px solid var(--k-line-strong);color:var(--k-ink);font:700 12px var(--k-font-body);letter-spacing:.14em;text-transform:uppercase;transition:background .18s var(--k-m-ease),border-color .18s,transform .14s}
+.hp-pick:active{transform:scale(.97)}
+.hp-pick:hover{border-color:var(--k-accent)}
+.hp-pick[aria-pressed="true"]{background:var(--k-accent);border-color:var(--k-accent);color:var(--k-on-accent)}
+.hp-end{flex:none;width:min(18rem,70vw);align-self:center}
+.hp-end p{margin:0 0 18px;font-size:15px;line-height:1.6;font-weight:600;color:var(--k-ink-soft)}
+
+/* signature: the commission slip */
+.hp-slip{position:fixed;z-index:35;top:calc(var(--hh) + 12px);left:max(12px,env(safe-area-inset-left));max-width:calc(100vw - 24px)}
+.hp-slip button{display:flex;align-items:center;gap:12px;min-height:48px;padding:6px 16px 6px 12px;background:var(--k-cream);color:var(--k-on-cream);border:0;text-align:left;font:700 12px var(--k-font-body);letter-spacing:.1em;text-transform:uppercase;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%);box-shadow:0 10px 30px rgba(0,0,0,.45);animation:hpSlip .35s var(--k-m-ease) both}
+.hp-slip b{display:grid;place-items:center;min-width:28px;height:28px;background:var(--k-bg);color:var(--k-ink);font-size:14px}
+.hp-slip span{display:block;line-height:1.3}
+.hp-slip small{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:none;color:#4a4545}
+@keyframes hpSlip{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+/* ---- 4 index: every category, one click each ---- */
 .hp-cats{padding:112px 0 96px;background-color:var(--k-bg);background-image:var(--k-texture);background-size:480px 320px}
 .hp-cats-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:36px}
 .hp-cat{display:grid;grid-template-columns:72px minmax(0,1fr) minmax(0,220px) 176px 48px;gap:24px;align-items:center;width:100%;padding:18px 0;background:none;border:0;border-top:1px solid var(--k-line);text-align:left;color:var(--k-ink)}
@@ -52,156 +113,268 @@ body{margin:0}
 .hp-n{font-family:var(--k-font-display);font-size:28px;color:var(--k-accent-text);letter-spacing:.06em}
 .hp-name{font-size:clamp(52px,7.4vw,112px);line-height:.88;transition:transform .35s ease,color .25s}
 .hp-cat:hover .hp-name,.hp-cat:focus-visible .hp-name{color:var(--k-accent);transform:translateX(18px)}
-.hp-sub{font-size:14px;line-height:1.5;font-weight:600;color:var(--k-ink-dim)}
-.hp-sub b{display:block;margin-top:6px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--k-muted)}
+.hp-csub{font-size:14px;line-height:1.5;font-weight:600;color:var(--k-ink-dim)}
+.hp-csub b{display:block;margin-top:6px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--k-muted)}
 .hp-thumb{display:block;height:100px;clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);background:var(--k-surface);overflow:hidden}
 .hp-thumb img{width:100%;height:100%;object-fit:cover}
 .hp-thumb .k-art{width:100%;height:100%}
 .hp-thumb .k-art img{width:auto;height:70%}
 .hp-arrow{justify-self:end;transition:transform .3s}
 .hp-cat:hover .hp-arrow{transform:translateX(8px);color:var(--k-accent-text)}
-/* custom band */
-.hp-band{position:relative;overflow:hidden;background:var(--k-accent);color:var(--k-on-accent)}
-.hp-custom{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px;align-items:center;padding-top:88px;padding-bottom:88px}
-.hp-custom-h{margin:0;font-size:clamp(76px,9.5vw,148px);line-height:.82}
-.hp-marker{display:block;font-family:var(--k-font-accent);font-style:normal;text-transform:uppercase;color:var(--k-on-cream);font-size:clamp(70px,9vw,140px);line-height:.9;transform:rotate(-3deg);margin:0 0 8px -4px}
-.hp-csub{margin:20px 0 14px;font-size:14px;font-weight:700;letter-spacing:.42em;text-transform:uppercase}
-.hp-cp{margin:0 0 34px;max-width:38ch;font-size:16px;line-height:1.6;font-weight:600}
-.hp-cart{position:relative;min-height:420px;clip-path:polygon(9% 0,100% 0,91% 100%,0 100%);background-color:var(--k-bg);background-image:var(--k-texture);background-size:420px 280px}
-.hp-cart .m{position:absolute;left:4%;bottom:-6px;width:96%;height:auto}
-.hp-cart .c1{position:absolute;left:14%;top:8%;width:150px;height:auto;opacity:.9}
-.hp-cart .c2{position:absolute;right:10%;top:10%;width:120px;height:auto}
-/* about */
-.hp-about{padding:120px 0 112px;background:var(--k-bg)}
-.hp-about-grid{display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1.5fr);gap:64px;align-items:center}
-.hp-kanji{font-family:var(--k-font-jp);font-weight:900;font-size:clamp(120px,17vw,260px);line-height:.9;color:var(--k-accent);letter-spacing:.04em;writing-mode:vertical-rl;margin:0}
+
+/* ---- 5 process: hard cut to cream, a slash that draws itself ---- */
+.hp-proc{background:var(--k-cream);color:var(--k-on-cream);padding:clamp(4rem,10vw,8rem) 0}
+.hp-proc-grid{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.4fr);gap:clamp(2rem,6vw,5rem);align-items:start}
+.hp-proc h2{margin:0;font-size:clamp(60px,7vw,108px);line-height:.86;position:sticky;top:calc(var(--hh) + 24px)}
+.hp-steps{position:relative;padding-left:clamp(28px,5vw,56px)}
+.hp-ol{display:grid;gap:clamp(2.2rem,6vw,4rem);margin:0;padding:0;list-style:none}
+.hp-line{position:absolute;left:6px;top:8px;bottom:8px;width:4px;background:var(--k-accent);transform-origin:top;transform:skewX(-14deg) scaleY(clamp(0,calc((var(--p,0) - 0.12) / 0.6),1))}
+:root:not(.sc-on) .hp-line{transform:skewX(-14deg)}
+.hp-step h3{margin:0;font-family:var(--k-font-display);font-weight:400;font-style:italic;font-size:clamp(34px,4vw,56px);line-height:.95;letter-spacing:.02em;text-transform:uppercase}
+.hp-step p{margin:10px 0 0;max-width:46ch;font-size:16px;line-height:1.65;font-weight:500;color:#2e2a2a}
+.hp-step b{color:var(--k-accent-on-light)}
+
+/* ---- 6 about ---- */
+.hp-about{padding:clamp(4rem,10vw,8rem) 0;background:var(--k-bg)}
+.hp-about-grid{display:grid;grid-template-columns:minmax(200px,.6fr) minmax(0,1.5fr);gap:clamp(2rem,6vw,4rem);align-items:center}
+.hp-kanji{font-family:var(--k-font-jp);font-weight:900;font-size:clamp(120px,17vw,260px);line-height:.9;color:var(--k-accent);letter-spacing:.04em;writing-mode:vertical-rl;margin:0;transform:translate3d(0,calc((var(--p,.5) - .5) * -60px),0)}
 .hp-ah{margin:16px 0 20px;font-size:clamp(56px,6.4vw,96px);line-height:.88}
 .hp-ap{margin:0;max-width:52ch;font-size:17px;line-height:1.7;font-weight:500;color:var(--k-ink-soft)}
-.hp-badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:14px;margin-top:44px}
-.hp-gl{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+
+/* ---- 7 close: the slip becomes the inquiry label ---- */
+.hp-close{background:var(--k-accent);color:var(--k-on-accent)}
+.hp-close .st{display:grid;place-items:center;padding:0 var(--k-gutter);min-height:min(88svh,780px)}
+.hp-close-in{width:100%;max-width:var(--k-max);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(2rem,6vw,4rem);align-items:center}
+.hp-close h2{margin:0;font-size:clamp(68px,9vw,140px);line-height:.84}
+.hp-close-sub{margin:20px 0 0;max-width:34ch;font-size:16px;line-height:1.6;font-weight:600}
+.hp-label-card{background:var(--k-cream);color:var(--k-on-cream);padding:26px 26px 24px;clip-path:polygon(0 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%);box-shadow:0 24px 60px rgba(60,0,4,.45)}
+.hp-label-card h3{margin:0 0 12px;font-size:11px;font-weight:800;letter-spacing:.3em;text-transform:uppercase;color:var(--k-accent-on-light)}
+.hp-lines{margin:0;padding:0;list-style:none;border-top:2px solid var(--k-on-cream)}
+.hp-lines li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #cfc9bf;font-size:15px;font-weight:700}
+.hp-lines li span:last-child{font-variant-numeric:tabular-nums;white-space:nowrap}
+.hp-empty{margin:0;padding:12px 0;font-size:15px;line-height:1.6;font-weight:500;color:#3d3838;border-top:2px solid var(--k-on-cream)}
+.hp-sum{display:flex;justify-content:space-between;gap:16px;margin-top:14px;font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.hp-sum span:last-child{font-variant-numeric:tabular-nums}
+.hp-fine{margin:10px 0 18px;font-size:12px;line-height:1.5;font-weight:500;color:#4a4545}
+.hp-close .k-btn--dark{width:100%;justify-content:center}
+
+/* ---- phone art direction ---- */
 @media (max-width:1080px){
-.hp-coll,.hp-custom,.hp-about-grid{grid-template-columns:minmax(0,1fr)}
-.hp-kanji{writing-mode:horizontal-tb;font-size:clamp(96px,22vw,180px)}
+.hp-proc-grid,.hp-about-grid,.hp-close-in{grid-template-columns:minmax(0,1fr)}
+.hp-proc h2{position:static}
+.hp-kanji{writing-mode:horizontal-tb;font-size:clamp(96px,22vw,180px);transform:none}
 .hp-cat{grid-template-columns:56px minmax(0,1fr) 140px 40px}
-.hp-sub{display:none}
-.hp-cream{clip-path:polygon(0 40px,50% 40px,53% 0,100% 0,100% 100%,0 100%)}
+.hp-csub{display:none}
 }
 @media (max-width:860px){
-.hp-hero{display:block;min-height:0}
-.hp-hero-d,.hp-scrim{display:none}
-.hp-hero-m{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:72% 16%}
-.hp-claw{width:260px;left:-40px;bottom:-20px}
-.hp-hero-in{position:relative;padding:28px var(--k-gutter) 72px}
-.hp-cream{padding:96px 0 72px}
-.hp-tiles{grid-template-columns:minmax(0,1fr);gap:28px}
-.hp-tile:nth-child(2){margin-top:0}
-.hp-frame img{aspect-ratio:4/3}
+.hp-hero .st{align-items:end}
+.hp-pl--far img.d{display:none}.hp-pl--far img.m{display:block}
+.hp-pl--far img{left:0;right:auto;top:0;width:100%;height:58%;object-position:72% 16%;
+ -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent);mask-image:linear-gradient(180deg,#000 55%,transparent)}
+.hp-kj{font-size:min(44vh,60vw);writing-mode:horizontal-tb}
+.hp-pl--claw img{width:56vw;bottom:36%}
+.hp-pl--near i{right:8%;bottom:44%;height:40%}
+.hp-h1{font-size:clamp(60px,18vw,92px)}
 .hp-cat{grid-template-columns:40px minmax(0,1fr) 36px;gap:14px}
 .hp-thumb{display:none}
-.hp-cart{min-height:300px}
+.hp-cats{padding:72px 0 64px}
+.hp-plate{width:min(17rem,72vw)}
+.hp-slip button{padding-right:12px}
+}
+
+/* ---- reduced motion: complete, calm, no pinned scroll space ---- */
+@media (prefers-reduced-motion:reduce){
+.hp [data-cue]{opacity:1;transform:none}
+.hp-q1{clip-path:none}
+.hp-pl{transform:none}
+.hp-line{transform:skewX(-14deg)}
+.hp-kanji{transform:none}
+.hp-slip button{animation:none}
 }
 </style>
 </helmet>
-<div class="kh-page k-root" style="min-height: 0">
-<section class="hp-hero" aria-labelledby="hp-h1">
-<img class="hp-hero-d" data-k-parallax="0.1" data-k-parallax-cover="" src="./assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="Model leaning on a stairwell railing in an oversized black tee printed with a snarling wolf and red moon" width="1672" height="941">
-<img class="hp-hero-m" src="./assets/84ffeef7e9819bb228b1b7e589df172a.webp" alt="Model leaning on a stairwell railing in an oversized black tee printed with a snarling wolf and red moon" width="960" height="540">
-<div class="hp-scrim"></div>
-<canvas class="hp-gl" data-k-gl="ink" aria-hidden="true"></canvas>
-<img class="hp-claw" data-k-parallax="-0.28" data-k-reveal="slash" src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt="">
-<div class="hp-hero-in">
-<h1 id="hp-h1" class="k-display hp-h1"><span class="l"><span class="in" data-k-reveal="line">Wear your</span></span><span class="l"><span class="in" data-k-reveal="line" data-k-delay="0.12"><span class="k-red">Wild</span> side.</span></span></h1>
-<div class="hp-cta" data-k-reveal="rise" data-k-delay="0.45"><button class="k-btn" data-k-magnetic="0.18" onClick="{{ onShop }}"><span>Shop the drop <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button></div>
-<p class="hp-tag" data-k-reveal="rise" data-k-delay="0.6"><img src="./assets/c463ac4d9b2b4802b28a81ce86960c45.svg" alt="">Made to stand out. Or blend in.</p>
+<div class="hp k-root" style="min-height: 0">
+
+<sc-if value="{{ slip.has }}" hint-placeholder-val="{{ false }}">
+<div class="hp-slip" role="status" aria-live="polite">
+<button onClick="{{ toClose }}" aria-label="Commission slip, {{ slip.count }} pieces. Jump to the slip.">
+<b>{{ slip.count }}</b>
+<span>Commission slip<small>{{ slip.depositLabel }} deposit now</small></span>
+</button>
+</div>
+</sc-if>
+
+<!-- 1 RECOGNITION: layered hero -->
+<section class="hp-hero" data-act="pin" style="--span: 2.2" aria-labelledby="hp-h1">
+<div class="st">
+<div class="hp-pl hp-pl--far" style="--d: .12" aria-hidden="true">
+<img class="d" src="./assets/6c0b2281e740e00a74a4bc95e137d10f.webp" alt="" width="1672" height="941">
+<img class="m" src="./assets/84ffeef7e9819bb228b1b7e589df172a.webp" alt="" width="960" height="540">
+</div>
+<div class="hp-pl hp-pl--mid" style="--d: .3" aria-hidden="true"><p class="hp-kj" lang="ja">黒狼</p></div>
+<div class="hp-pl hp-pl--claw" style="--d: .7" aria-hidden="true"><img src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></div>
+<div class="hp-pl hp-pl--near" style="--d: 1" aria-hidden="true"><i></i></div>
+<div class="hp-type" data-cue="0 9">
+<h1 id="hp-h1" class="k-display hp-h1"><span class="l">Wear your</span><span class="l"><span class="k-red">Wild</span> side.</span></h1>
+<p class="hp-sub">Custom gear built around your fursona. Every piece is made to order.</p>
+<div class="hp-cta">
+<button class="k-btn" data-k-magnetic="0.18" onClick="{{ onCommission }}"><span>Start a commission <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></button>
+<button class="hp-link" onClick="{{ onReady }}">Shop ready-made</button>
+</div>
+</div>
 </div>
 </section>
 
-<section class="hp-cream k-on-cream k-anchor" aria-labelledby="hp-coll-h">
-<div class="k-wrap hp-coll">
-<div>
-<p class="k-eyebrow" data-k-reveal="rise">Signature pieces</p>
-<h2 id="hp-coll-h" class="k-display hp-h2" data-k-reveal="rise" data-k-delay="0.08">The<br>Collection</h2>
-<img class="hp-brush" data-k-reveal="draw" data-k-delay="0.3" src="./assets/760a93cf46e4ecfe7f61d92bbeaacaf2.svg" alt="">
-<p class="hp-lede" data-k-reveal="rise">Wolf, moon, claw. Start with the three pieces that carry the whole look.</p>
-<button class="k-link" data-k-reveal="rise" onClick="{{ onShop }}">Shop all gear <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></button>
+<!-- 1b READY-MADE: in stock designs, first thing to buy on the page -->
+<sc-if value="{{ hasReady }}" hint-placeholder-val="{{ true }}">
+<section class="hp-ready k-anchor" aria-labelledby="hp-ready-h">
+<div class="k-wrap">
+<div class="hp-ready-head">
+<h2 id="hp-ready-h" class="k-display" data-k-reveal="rise">Ready-made.<br>Ships now.</h2>
+<p data-k-reveal="rise" data-k-delay="0.1">Fitted tees and posters, no commission needed. Pick a color and size and check out.</p>
 </div>
-<div class="hp-tiles">
-<sc-for list="{{ tiles }}" as="t" hint-placeholder-count="3">
-<button class="hp-tile" onClick="{{ t.open }}" aria-label="View {{ t.name }}, {{ t.priceLabel }}">
-<div class="hp-frame" data-k-tilt="3"><img data-k-reveal="slash" src="{{ t.image }}" alt="" style="object-position: {{ t.imagePos }}"></div>
-<div class="hp-cap" data-k-reveal="rise"><i></i>{{ t.name }}<em>{{ t.priceLabel }}</em></div>
+<div class="hp-ready-grid">
+<sc-for list="{{ ready }}" as="r" hint-placeholder-count="3">
+<button class="hp-rc" data-k-reveal="rise" onClick="{{ r.open }}" aria-label="View {{ r.name }}, {{ r.priceLabel }}">
+<span class="hp-rm" style="background: {{ r.bg }}"><img src="{{ r.image }}" alt="" loading="lazy" style="object-position: {{ r.imagePos }}; object-fit: {{ r.fit }}"></span>
+<span class="hp-rn">{{ r.name }}</span>
+<span class="hp-rp">{{ r.priceLabel }}</span>
 </button>
 </sc-for>
 </div>
+<button class="k-btn" onClick="{{ onReady }}" style="margin-top: 32px"><span>Shop all ready-made</span></button>
+</div>
+</section>
+</sc-if>
+
+<!-- 2 SILENCE: authored quiet before the range -->
+
+<!-- 3 THE RANGE (peak): lateral rail, pick pieces onto the slip -->
+<section class="hp-range k-anchor" data-act="pan" style="--span: 7.5" aria-labelledby="hp-range-h">
+<div class="st">
+<div class="hp-rail" data-rail>
+<div class="hp-lead">
+<h2 id="hp-range-h" class="k-display">The<br>range</h2>
+<p>Add pieces to your slip as they drift past. Each one takes a $25 design deposit when you commission.</p>
+</div>
+<sc-for list="{{ rail }}" as="r" hint-placeholder-count="4">
+<article class="hp-plate" data-rail-item>
+<button class="hp-media" onClick="{{ r.open }}" aria-label="View {{ r.name }}"><img src="{{ r.image }}" alt="" loading="lazy" style="object-position: {{ r.imagePos }}"></button>
+<div class="hp-label">
+<h3>{{ r.name }}</h3>
+<p class="hp-price">{{ r.priceLabel }}</p>
+<p class="hp-fact">{{ r.fact }}</p>
+<button class="hp-pick" aria-pressed="{{ r.on }}" onClick="{{ r.toggle }}"><span>{{ r.btn }}</span></button>
+</div>
+</article>
+</sc-for>
+<div class="hp-end" data-rail-item>
+<p>Every category, made to order.</p>
+<button class="k-btn k-btn--sm" onClick="{{ onShop }}"><span>Shop all gear</span></button>
+</div>
+</div>
 </div>
 </section>
 
-<section class="hp-cats k-anchor" aria-labelledby="hp-cats-h">
+<!-- 4 ORIENTATION: every category -->
+<section class="hp-cats k-anchor" data-act="flow" aria-labelledby="hp-cats-h">
 <div class="k-wrap">
 <div class="hp-cats-head">
 <h2 id="hp-cats-h" class="k-display k-section-title" data-k-reveal="rise">Shop by category</h2>
-<p class="k-eyebrow" data-k-reveal="rise" data-k-delay="0.1">Four ways in</p>
+<p class="k-eyebrow" data-k-reveal="rise" data-k-delay="0.1">Find your piece</p>
 </div>
 <div>
 <sc-for list="{{ catRows }}" as="c" hint-placeholder-count="4">
 <button class="hp-cat" data-k-reveal="rise" onClick="{{ c.select }}" aria-label="Shop {{ c.label }}, {{ c.countLabel }}">
 <span class="hp-n">{{ c.n }}</span>
 <span class="k-display hp-name">{{ c.label }}</span>
-<span class="hp-sub">{{ c.sub }}<b>{{ c.countLabel }}</b></span>
+<span class="hp-csub">{{ c.sub }}<b>{{ c.countLabel }}</b></span>
 <span class="hp-thumb">
-<sc-if value="{{ c.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ c.image }}" alt=""></sc-if>
+<sc-if value="{{ c.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ c.image }}" alt="" loading="lazy"></sc-if>
 <sc-if value="{{ c.noPhoto }}" hint-placeholder-val="{{ false }}"><span class="k-art"><img src="{{ c.artUrl }}" alt=""></span></sc-if>
 </span>
-<svg class="hp-arrow" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg>
+<svg class="hp-arrow" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
 </button>
 </sc-for>
 </div>
 </div>
 </section>
 
-<section class="hp-band k-on-accent k-anchor" aria-labelledby="hp-custom-h">
-<div class="k-wrap hp-custom">
-<div>
-<h2 id="hp-custom-h" class="k-display hp-custom-h" data-k-reveal="rise">Custom</h2>
-<span class="hp-marker" data-k-reveal="rise" data-k-delay="0.12" aria-hidden="true">Prints</span>
-<p class="hp-csub" data-k-reveal="rise" data-k-delay="0.1">Your design. Our gear.</p>
-<p class="hp-cp" data-k-reveal="rise" data-k-delay="0.1">Turn your artwork into wearable gear. Send an inquiry and we will take it from there.</p>
-<button class="k-btn k-btn--dark" data-k-magnetic="0.18" data-k-reveal="rise" onClick="{{ onCustom }}"><span>Start a custom print inquiry <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
-</div>
-<div class="hp-cart" role="img" aria-label="Wolf crest and mountain silhouette under a red moon">
-<img class="c1" data-k-parallax="-0.2" src="./assets/93eba917cff886a4ae1ea570c6b387ab.svg" alt="">
-<img class="c2" data-k-parallax="0.25" src="./assets/b9ea5f2df029c70d00aa70ae7c352a23.svg" alt="">
-<img class="m" data-k-reveal="slash" src="./assets/d164f2ec5d403ddd31a3d107018ea8e3.svg" alt="">
+<!-- 5 TRUST: how a commission works. Hard cut to cream; the slash draws itself -->
+<section class="hp-proc k-on-cream" data-act="flow" aria-labelledby="hp-proc-h">
+<div class="k-wrap hp-proc-grid">
+<h2 id="hp-proc-h" class="k-display">How a<br>commission<br>works</h2>
+<div class="hp-steps">
+<i class="hp-line" aria-hidden="true"></i>
+<ol class="hp-ol">
+<li class="hp-step" data-cue="0.3 9"><h3>Pay the deposit</h3><p><b>$25 per piece</b>, non-refundable. It locks your slot. Then you send your ref sheet and fursona details.</p></li>
+<li class="hp-step" data-cue="0.42 9"><h3>See your mockup</h3><p>A full mockup is built from your ref sheet and sent to you. Nothing is printed yet.</p></li>
+<li class="hp-step" data-cue="0.54 9"><h3>Revise it</h3><p>Two rounds of changes are free. Any extra round is <b>$10</b>.</p></li>
+<li class="hp-step" data-cue="0.64 9"><h3>Pay the balance</h3><p>Only after you approve the final mockup. Then it prints and ships directly to you, internationally.</p></li>
+</ol>
 </div>
 </div>
 </section>
 
-<section class="hp-about k-anchor" id="kc-about" aria-labelledby="hp-about-h">
+<!-- 6 BELONGING -->
+<section class="hp-about k-anchor" id="kc-about" data-act="flow" aria-labelledby="hp-about-h">
 <div class="k-wrap hp-about-grid">
-<p class="hp-kanji" data-k-reveal="fade" data-k-parallax="0.18" lang="ja" aria-hidden="true">黒狼</p>
+<p class="hp-kanji" lang="ja" aria-hidden="true">黒狼</p>
 <div>
-<p class="k-eyebrow" data-k-reveal="rise">About Kokuro</p>
-<h2 id="hp-about-h" class="k-display hp-ah" data-k-reveal="rise" data-k-delay="0.08">Black wolf.<br>Loud or quiet.</h2>
-<p class="hp-ap" data-k-reveal="rise">Kokuro (黒狼) is Japanese for black wolf. The gear runs dark, the prints run loud, and you decide which one shows. Made to stand out. Or blend in.</p>
-<div class="hp-badges">
-<div class="k-badge" data-k-reveal="rise"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"></path><path d="m3 7.5 9 4.5 9-4.5M12 12v9"></path></svg><div><b>Print-to-order</b><span>High quality, no waste</span></div></div>
-<div class="k-badge" data-k-reveal="rise"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L17 4l3 3L8 19z"></path><path d="m14 7 3 3"></path></svg><div><b>Custom designs</b><span>Make it yours</span></div></div>
-<div class="k-badge" data-k-reveal="rise"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"></circle><path d="m8.5 14.5-1.5 7 5-3 5 3-1.5-7"></path></svg><div><b>Premium quality</b><span>Built to last</span></div></div>
+<h2 id="hp-about-h" class="k-display hp-ah" data-k-reveal="rise">Black wolf.<br>Loud or quiet.</h2>
+<p class="hp-ap" data-k-reveal="rise">Kokuro (黒狼) is Japanese for black wolf. The gear runs dark, the prints run loud, and you decide which one shows. Every piece is made to order from your ref sheet. Made to stand out. Or blend in.</p>
+</div>
+</div>
+</section>
+
+<!-- 7 RESOLVE: your slip, printed as the inquiry label -->
+<section class="hp-close k-on-accent" id="hp-close" data-act="pin" style="--span: 1.1" aria-labelledby="hp-close-h">
+<div class="st">
+<div class="hp-close-in">
+<div>
+<h2 id="hp-close-h" class="k-display">Your character.<br>Your gear.</h2>
+<p class="hp-close-sub">Tell us who you are and what you want to wear. We take it from there.</p>
+</div>
+<div class="hp-label-card">
+<h3>Commission slip</h3>
+<sc-if value="{{ slip.has }}" hint-placeholder-val="{{ false }}">
+<ul class="hp-lines">
+<sc-for list="{{ slip.lines }}" as="l" hint-placeholder-count="2"><li><span>{{ l.name }}</span><span>{{ l.priceLabel }}</span></li></sc-for>
+</ul>
+<div class="hp-sum"><span>Deposit now</span><span>{{ slip.depositLabel }}</span></div>
+</sc-if>
+<sc-if value="{{ slip.empty }}" hint-placeholder-val="{{ true }}">
+<p class="hp-empty">No pieces yet. Add some from the range, or start with a blank slip and describe your own.</p>
+</sc-if>
+<p class="hp-fine">$25 per piece, non-refundable. The balance is due only after you approve your mockup.</p>
+<button class="k-btn k-btn--dark" onClick="{{ onCommission }}"><span>Start a commission <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></button>
 </div>
 </div>
 </div>
 </section>
+
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"tiles":{"editor":null},"catRows":{"editor":null},"onShop":{"editor":null},"onCustom":{"editor":null},"$preview":{"width":1440,"height":4700}}'>
+<script type="text/x-dc" data-dc-script data-props='{"tiles":{"editor":null},"catRows":{"editor":null},"ready":{"editor":null},"onReady":{"editor":null},"rail":{"editor":null},"slip":{"editor":null},"onShop":{"editor":null},"onCustom":{"editor":null},"onCommission":{"editor":null},"$preview":{"width":1440,"height":6200}}'>
 class Component extends DCLogic {
   renderVals() {
     const noop = () => {};
+    const p = this.props;
+    const slip = p.slip || { has: false, empty: true, count: 0, lines: [], depositLabel: '$0.00', depositNow: '0' };
     return {
-      tiles: this.props.tiles || [],
-      catRows: this.props.catRows || [],
-      onShop: this.props.onShop || noop,
-      onCustom: this.props.onCustom || noop
+      catRows: p.catRows || [],
+      rail: p.rail || [],
+      ready: p.ready || [], hasReady: (p.ready || []).length > 0,
+      onReady: p.onReady || p.onShop || noop,
+      slip,
+      onShop: p.onShop || noop,
+      onCommission: p.onCommission || p.onCustom || noop,
+      toClose: () => {
+        try {
+          const el = document.getElementById('hp-close');
+          if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
+        } catch (e) {}
+      }
     };
   }
 }

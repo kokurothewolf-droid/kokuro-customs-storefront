@@ -12,7 +12,7 @@
 <x-dc>
 <helmet>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
 .kq{color:var(--k-ink);font-family:var(--k-font-body)}
@@ -31,7 +31,7 @@ select.k-field{appearance:none;background-image:linear-gradient(45deg,transparen
 </style>
 </helmet>
 <div class="kq k-root" style="min-height: 0">
-<form class="k-panel" onSubmit="{{ submit }}" novalidate="" aria-labelledby="kq-title">
+<form class="k-panel" onSubmit="{{ submit }}" novalidate aria-labelledby="kq-title">
 <h2 id="kq-title" class="k-display kq-h">Custom print inquiry <img src="./assets/c683f776b1f40ef9917a32ae1dec467e.svg" alt=""></h2>
 
 <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
@@ -46,17 +46,17 @@ select.k-field{appearance:none;background-image:linear-gradient(45deg,transparen
 <div class="kq-row">
 <div class="kq-f">
 <label class="k-label" for="kq-name">Name <b aria-hidden="true">*</b></label>
-<input id="kq-name" class="k-field" type="text" autocomplete="name" value="{{ name }}" onChange="{{ onName }}" aria-invalid="{{ nameBad }}" aria-describedby="kq-name-e" required="">
+<input id="kq-name" class="k-field" type="text" autocomplete="name" value="{{ name }}" onChange="{{ onName }}" aria-invalid="{{ nameBad }}" aria-describedby="kq-name-e" required>
 <p class="k-err" id="kq-name-e">{{ nameErr }}</p>
 </div>
 <div class="kq-f">
 <label class="k-label" for="kq-email">Email <b aria-hidden="true">*</b></label>
-<input id="kq-email" class="k-field" type="email" autocomplete="email" value="{{ email }}" onChange="{{ onEmail }}" aria-invalid="{{ emailBad }}" aria-describedby="kq-email-e" required="">
+<input id="kq-email" class="k-field" type="email" autocomplete="email" value="{{ email }}" onChange="{{ onEmail }}" aria-invalid="{{ emailBad }}" aria-describedby="kq-email-e" required>
 <p class="k-err" id="kq-email-e">{{ emailErr }}</p>
 </div>
 <div class="kq-f">
 <label class="k-label" for="kq-type">Product type <b aria-hidden="true">*</b></label>
-<select id="kq-type" class="k-field" value="{{ type }}" onChange="{{ onType }}" aria-invalid="{{ typeBad }}" aria-describedby="kq-type-e" required="">
+<select id="kq-type" class="k-field" value="{{ type }}" onChange="{{ onType }}" aria-invalid="{{ typeBad }}" aria-describedby="kq-type-e" required>
 <option value="">Select a product...</option>
 <sc-for list="{{ types }}" as="t" hint-placeholder-count="4"><option value="{{ t }}">{{ t }}</option></sc-for>
 </select>
@@ -64,13 +64,13 @@ select.k-field{appearance:none;background-image:linear-gradient(45deg,transparen
 </div>
 <div class="kq-f">
 <label class="k-label" for="kq-qty">Quantity <b aria-hidden="true">*</b></label>
-<input id="kq-qty" class="k-field" type="number" min="1" max="999" inputmode="numeric" value="{{ qty }}" onChange="{{ onQty }}" aria-invalid="{{ qtyBad }}" aria-describedby="kq-qty-e" required="">
+<input id="kq-qty" class="k-field" type="number" min="1" max="999" inputmode="numeric" value="{{ qty }}" onChange="{{ onQty }}" aria-invalid="{{ qtyBad }}" aria-describedby="kq-qty-e" required>
 <p class="k-err" id="kq-qty-e">{{ qtyErr }}</p>
 </div>
 </div>
 <div class="kq-f">
 <label class="k-label" for="kq-desc">Design description <b aria-hidden="true">*</b></label>
-<textarea id="kq-desc" class="k-field" placeholder="Describe your design, theme, text, colors and any specific details..." onChange="{{ onDesc }}" aria-invalid="{{ descBad }}" aria-describedby="kq-desc-e" required="">{{ desc }}</textarea>
+<textarea id="kq-desc" class="k-field" placeholder="Describe your design, theme, text, colors and any specific details..." onChange="{{ onDesc }}" aria-invalid="{{ descBad }}" aria-describedby="kq-desc-e" required>{{ desc }}</textarea>
 <p class="k-err" id="kq-desc-e">{{ descErr }}</p>
 </div>
 <div class="kq-f">
@@ -82,12 +82,12 @@ select.k-field{appearance:none;background-image:linear-gradient(45deg,transparen
 <label class="k-label" for="kq-notes">Additional notes <span class="kq-opt">(optional)</span></label>
 <textarea id="kq-notes" class="k-field" placeholder="Any other requests, questions or important details..." onChange="{{ onNotes }}" style="min-height: 84px">{{ notes }}</textarea>
 </div>
-<button type="submit" class="k-btn k-btn--block" disabled="{{ busy }}" style="margin-top: 18px"><span>{{ submitLabel }} <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></button>
+<button type="submit" class="k-btn k-btn--block" disabled="{{ busy }}" style="margin-top: 18px"><span>{{ submitLabel }} <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span></button>
 </sc-if>
 </form>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"productTypes":{"editor":null},"onSubmit":{"editor":null},"$preview":{"width":720,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"productTypes":{"editor":null},"slipText":{"editor":null},"onSubmit":{"editor":null},"$preview":{"width":720,"height":1000}}'>
 class Component extends DCLogic {
   state = { name: '', email: '', type: '', qty: '1', desc: '', ref: '', notes: '', errors: {}, busy: false, submitted: false, doneName: '' };
 
@@ -124,7 +124,7 @@ class Component extends DCLogic {
         this.setState({ errors });
         if (Object.keys(errors).length) return;
         const st = this.state;
-        const payload = { name: st.name.trim(), email: st.email.trim(), productType: st.type, quantity: parseInt(st.qty, 10), designDescription: st.desc.trim(), reference: st.ref.trim(), notes: st.notes.trim() };
+        const payload = { name: st.name.trim(), email: st.email.trim(), productType: st.type, quantity: parseInt(st.qty, 10), designDescription: st.desc.trim(), reference: st.ref.trim(), notes: (st.notes.trim() + (this.props.slipText ? '\nCommission slip: ' + this.props.slipText : '')).trim() };
         this.setState({ busy: true });
         const done = () => this.setState({ busy: false, submitted: true, doneName: payload.name });
         const r = this.props.onSubmit ? this.props.onSubmit(payload) : null;

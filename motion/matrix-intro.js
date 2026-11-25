@@ -84,7 +84,9 @@
     '#hud #btn-close{padding:0 14px;}',
     '#audio-toast{position:absolute;z-index:40;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);padding:8px 14px;border-radius:8px;background:rgba(0,0,0,.8);border:1px solid rgba(0,255,65,.4);color:#6dffa1;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:0;transition:opacity .5s;pointer-events:none;text-align:center;}',
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}',
-    '@media (max-width:520px){#hud button{padding:0 12px;font-size:12px;letter-spacing:.1em;}}'
+    '#kmi{touch-action:none;overscroll-behavior:contain;}',
+    '@media (max-width:520px){#hud{left:12px;right:12px;max-width:none;justify-content:space-between;}#hud #btn-skip{flex:1 1 auto;justify-content:center;}#hud button{padding:0 12px;font-size:12px;letter-spacing:.1em;}#terminal-layer{padding:84px 20px 24px;}#audio-toast{width:calc(100% - 32px);}}',
+    '@media (max-height:420px) and (orientation:landscape){#terminal-layer{padding:64px 24px 16px;}#terminal-line{font-size:clamp(1.1rem,4vh,1.6rem);}}'
   ].join('\n');
 
   var HTML = [
@@ -277,8 +279,21 @@
 
       this.resize();
       // KOKURO: keep a reference so destroy() can remove the listener
-      this._onResize = () => this.resize();
+      // Debounced; on phones the address bar showing/hiding changes only the height by
+      // ~50-120px, which must not reset the falling streams.
+      this._onResize = () => {
+        clearTimeout(this._rt);
+        this._rt = setTimeout(() => {
+          const w = this.host().w, h = this.host().h;
+          if (Math.abs(w - this.width) < 2 && Math.abs(h - this.height) < 140) {
+            this.height = h; // keep logical height in step without rebuilding columns
+            return;
+          }
+          this.resize();
+        }, 120);
+      };
       window.addEventListener('resize', this._onResize);
+      window.addEventListener('orientationchange', this._onResize);
     }
 
     randomGlyph() {
@@ -372,10 +387,23 @@
       ctx.restore();
     }
 
+    // KOKURO: size from the overlay itself (not window.innerHeight) so mobile browser
+    // chrome and dynamic viewports never leave a gap or clip the rain.
+    host() {
+      const p = this.canvas.parentElement;
+      const vv = window.visualViewport;
+      return {
+        w: (p && p.clientWidth) || (vv && vv.width) || window.innerWidth,
+        h: (p && p.clientHeight) || (vv && vv.height) || window.innerHeight
+      };
+    }
+
     resize() {
-      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-      this.width = window.innerWidth;
-      this.height = window.innerHeight;
+      const sz = this.host();
+      // KOKURO: lower pixel-ratio cap on phones to keep the rain smooth (look unchanged)
+      this.dpr = Math.min(window.devicePixelRatio || 1, sz.w < 700 ? 1.5 : 2);
+      this.width = Math.floor(sz.w);
+      this.height = Math.floor(sz.h);
 
       this.canvas.width = Math.floor(this.width * this.dpr);
       this.canvas.height = Math.floor(this.height * this.dpr);
@@ -387,7 +415,8 @@
     initColumns() {
       this.columns = [];
       // Base font size scales gracefully from mobile to 4K monitors
-      const baseSize = Math.max(14, Math.min(20, Math.floor(this.width / 72)));
+      // KOKURO: slightly smaller minimum cell on phones so the rain reads as dense as on desktop
+      const baseSize = Math.max(this.width < 600 ? 12 : 14, Math.min(20, Math.floor(this.width / 72)));
       const colCount = Math.ceil(this.width / baseSize);
 
       for (let i = 0; i < colCount; i++) {
@@ -449,7 +478,9 @@
     // KOKURO: stop the loop, detach the resize listener, free the canvas bitmap
     destroy() {
       this.stop();
+      clearTimeout(this._rt);
       window.removeEventListener('resize', this._onResize);
+      window.removeEventListener('orientationchange', this._onResize);
       this.columns = [];
       try { this.canvas.width = 1; this.canvas.height = 1; } catch (e) {}
     }
@@ -733,7 +764,7 @@
     host.setAttribute('role', 'dialog');
     host.setAttribute('aria-modal', 'true');
     host.setAttribute('aria-label', 'Furry Mode introduction');
-    host.style.cssText = 'position:fixed;inset:0;z-index:2147483200;';
+    host.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100vh;height:100dvh;z-index:2147483200;overflow:hidden;';
     var sr = host.attachShadow({ mode: 'open' });
     sr.innerHTML = '<style>' + CSS + '</style>' + HTML;
     document.body.appendChild(host);

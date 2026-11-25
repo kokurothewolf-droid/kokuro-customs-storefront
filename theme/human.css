@@ -65,7 +65,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 img { display: block; }
 
-.k-root { background: var(--k-bg); color: var(--k-ink); font-family: var(--k-font-body); min-height: 100%; overflow-x: hidden; text-wrap: pretty; }
+.k-root { background: var(--k-bg); color: var(--k-ink); font-family: var(--k-font-body); min-height: 100%; overflow-x: clip; text-wrap: pretty; }
 .k-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .k-wrap { max-width: var(--k-max); margin: 0 auto; padding-left: var(--k-gutter); padding-right: var(--k-gutter); width: 100%; }
 .k-anchor { scroll-margin-top: 84px; }
